@@ -60,6 +60,16 @@
 			"name": "content chunks (all locales)",
 			"path": "dist/assets/site-*.js",
 			"limit": "10 kB"
+		},
+		{
+			"name": "cv route chunk",
+			"path": "dist/assets/cv.lazy-*.js",
+			"limit": "8 kB"
+		},
+		{
+			"name": "cv content chunks (all locales)",
+			"path": "dist/assets/cv-*.js",
+			"limit": "8 kB"
 		}
 	]
 }
