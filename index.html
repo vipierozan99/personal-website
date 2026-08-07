@@ -15,16 +15,16 @@
   <script>
     (() => {
       try {
-        var d = document.documentElement;
-        var t = localStorage.theme;
+        const d = document.documentElement;
+        let t = localStorage.theme;
         if (t !== "dark" && t !== "light")
           t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         d.dataset.theme = t;
-        var r = JSON.parse(localStorage.reader || "null") || {};
+        const r = JSON.parse(localStorage.reader || "null") || {};
         if (r.face === "sans" || r.face === "mono") d.dataset.face = r.face;
         if (r.measure === 58 || r.measure === 80) d.dataset.measure = String(r.measure);
         if (r.size === 16 || r.size === 21) d.dataset.size = String(r.size);
-      } catch (e) { }
+      } catch { }
     })();
   </script>
 

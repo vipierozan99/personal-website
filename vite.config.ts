@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
+import { comark } from "./vite/comark.ts";
 
 export default defineConfig({
 	plugins: [
@@ -10,6 +11,7 @@ export default defineConfig({
 		tanstackRouter({ target: "react", autoCodeSplitting: false }),
 		react(),
 		tailwindcss(),
+		comark(),
 	],
 	build: {
 		// The prerender step reads this to find the hashed chunk of the content it
