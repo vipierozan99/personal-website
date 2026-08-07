@@ -72,54 +72,74 @@
 :root {
 	color-scheme: light;
 	/* Warm paper, near-black ink, oxide accent. */
-	--paper: oklch(98.4% 0.004 91);
-	--ink: oklch(20% 0.014 92);
-	--accent: oklch(41% 0.1 38);
-	--accent-2: oklch(55.5% 0.145 40);
+	--paper: oklch(98.5% 0.004 91);
+	--ink: oklch(19.5% 0.012 100);
+	--accent: oklch(42.2% 0.105 37);
+	--accent-2: oklch(58.5% 0.152 39);
 }
 
 [data-theme="dark"] {
 	color-scheme: dark;
 	/* Cool slate, warm off-white ink, apricot accent. */
-	--paper: oklch(25.5% 0.005 250);
-	--ink: oklch(94% 0.012 84);
-	--accent: oklch(74% 0.13 45);
-	--accent-2: oklch(78.5% 0.1 48);
+	--paper: oklch(26.4% 0.006 258);
+	--ink: oklch(95% 0.011 85);
+	--accent: oklch(73.4% 0.138 44);
+	--accent-2: oklch(77.9% 0.11 50);
 }
 
+/*
+ * Percentages are solved numerically against the design's original hex table
+ * (scripts in the repo history); a single shared percentage is used where its
+ * residual is invisible, and `light-dark()` carries the per-theme pair where
+ * the two themes genuinely want different distances — surfaces, whose contrast
+ * against the sheet is art-directed, and the accent tints, whose light/dark
+ * ordering flips. `band` and `on-accent` mix toward black instead of ink:
+ * the desk behind the sheet darkens on both themes, and text on the accent
+ * pill stays dark under a light accent, which "toward ink" cannot express.
+ */
 :root {
 	/* Surfaces */
-	--paper-2: color-mix(in oklab, var(--paper) 97.5%, var(--ink));
-	--band: color-mix(in oklab, var(--paper) 94%, black);
+	--paper-2: light-dark(
+		color-mix(in oklab, var(--paper) 98.5%, var(--ink)),
+		color-mix(in oklab, var(--paper) 95%, var(--ink))
+	);
+	--band: light-dark(
+		color-mix(in oklab, var(--paper) 95.5%, black),
+		color-mix(in oklab, var(--paper) 89%, black)
+	);
 	--header-bg: oklch(from var(--paper) l c h / 0.92);
-	--chip-bg: color-mix(in oklab, var(--paper) 93.5%, var(--ink));
-	--row-hover: color-mix(in oklab, var(--paper) 95.5%, var(--ink));
+	--chip-bg: color-mix(in oklab, var(--paper) 92%, var(--ink));
+	--row-hover: light-dark(
+		color-mix(in oklab, var(--paper) 98.5%, var(--ink)),
+		color-mix(in oklab, var(--paper) 92%, var(--ink))
+	);
 
 	/* Text, ink through faint */
-	--ink-2: color-mix(in oklab, var(--ink) 90%, var(--paper));
-	--ink-3: color-mix(in oklab, var(--ink) 76%, var(--paper));
-	--mut: color-mix(in oklab, var(--ink) 63%, var(--paper));
-	--mut-2: color-mix(in oklab, var(--ink) 49%, var(--paper));
-	--faint: color-mix(in oklab, var(--ink) 38%, var(--paper));
+	--ink-2: color-mix(in oklab, var(--ink) 89%, var(--paper));
+	--ink-3: color-mix(in oklab, var(--ink) 73%, var(--paper));
+	--mut: color-mix(in oklab, var(--ink) 62%, var(--paper));
+	--mut-2: color-mix(in oklab, var(--ink) 48%, var(--paper));
+	--faint: color-mix(in oklab, var(--ink) 37%, var(--paper));
 	--faint-2: color-mix(in oklab, var(--ink) 25%, var(--paper));
 
 	/* Rules */
-	--rule: color-mix(in oklab, var(--ink) 10.5%, var(--paper));
-	--rule-2: color-mix(in oklab, var(--ink) 8%, var(--paper));
+	--rule: color-mix(in oklab, var(--ink) 12%, var(--paper));
+	--rule-2: color-mix(in oklab, var(--ink) 9%, var(--paper));
 
 	/* Accent tints */
-	--accent-line: color-mix(in oklab, var(--accent) 33%, var(--paper));
-	--accent-soft: color-mix(in oklab, var(--accent) 38%, var(--paper));
-	--hover-bg: color-mix(in oklab, var(--accent) 10%, var(--paper));
-	--on-accent: var(--paper);
-}
-
-[data-theme="dark"] {
-	/* The desk behind the sheet darkens on both themes, which "toward ink"
-	   cannot express in the dark one; on-accent likewise must stay dark under a
-	   light accent. Documented overrides, not part of the formula system. */
-	--band: color-mix(in oklab, var(--paper) 82%, black);
-	--on-accent: color-mix(in oklab, var(--paper) 88%, black);
+	--accent-line: light-dark(
+		color-mix(in oklab, var(--accent) 34%, var(--paper)),
+		color-mix(in oklab, var(--accent) 26%, var(--paper))
+	);
+	--accent-soft: light-dark(
+		color-mix(in oklab, var(--accent) 27%, var(--paper)),
+		color-mix(in oklab, var(--accent) 33%, var(--paper))
+	);
+	--hover-bg: color-mix(in oklab, var(--accent) 11%, var(--paper));
+	--on-accent: light-dark(
+		var(--paper),
+		color-mix(in oklab, var(--paper) 92%, black)
+	);
 }
 
 @theme inline {
