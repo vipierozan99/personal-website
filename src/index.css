@@ -295,6 +295,34 @@
 	a:hover {
 		text-decoration: underline;
 	}
+
+	/*
+	 * Scrollbars follow the palette — the page's and the capped panels' alike:
+	 * a thin faint thumb on no track, darkening with the theme because the
+	 * tokens do. Engines that speak scrollbar-color ignore the -webkit-* rules
+	 * below outright; they are the fallback for older WebKit only.
+	 */
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: var(--faint-2) transparent;
+	}
+
+	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+	::-webkit-scrollbar-thumb {
+		border: 3px solid transparent;
+		border-radius: 999px;
+		background-color: var(--faint-2);
+		background-clip: content-box;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: var(--faint);
+	}
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
 }
 
 /*
