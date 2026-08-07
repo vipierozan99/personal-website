@@ -1,9 +1,9 @@
 import { createMarkdownParser } from "comark";
 import { describe, expect, it } from "vitest";
-import { buildContent, type SiteDocument } from "./model";
 // `?raw` bypasses the comark plugin, so the test drives the parser itself and
 // can also parse mutated copies of the source.
-import source from "./site.en.md?raw";
+import source from "./en/site.md?raw";
+import { buildContent, type SiteDocument } from "./model";
 
 const parse = createMarkdownParser({ linkify: false });
 

@@ -1,17 +1,18 @@
 import { buildContent, type SiteContent, type SiteDocument } from "./model";
 
 /**
- * One lazy chunk per language. The `.md` files are parsed to an AST by the
- * `comark()` Vite plugin at build time and reach the browser as plain JSON, so
- * no parser ships — and the glob keeps each language out of the app bundle, so
- * a session only ever downloads the ones it is shown.
+ * One lazy chunk per language, from `src/content/<locale>/site.md`. The `.md`
+ * files are parsed to an AST by the `comark()` Vite plugin at build time and
+ * reach the browser as plain JSON, so no parser ships — and the glob keeps
+ * each language out of the app bundle, so a session only ever downloads the
+ * ones it is shown.
  */
-const content = import.meta.glob("./site.*.md", {
+const content = import.meta.glob("./*/site.md", {
 	import: "default",
 }) as Record<string, () => Promise<unknown>>;
 
-const PREFIX = "./site.";
-const SUFFIX = ".md";
+const PREFIX = "./";
+const SUFFIX = "/site.md";
 
 const path = (locale: string) => `${PREFIX}${locale}${SUFFIX}`;
 
@@ -43,8 +44,17 @@ export async function loadContent(locale: string): Promise<SiteContent> {
 
 	const load = content[path(locale)];
 	if (!load) {
+		// A locale that exists in the UI but has no document yet reads in
+		// English rather than crashing — deliberately NOT cached under the
+		// requested locale, so adding the file later just starts working.
+		if (locale !== DEFAULT_LOCALE) {
+			console.warn(
+				`no src/content/${locale}/site.md — falling back to ${DEFAULT_LOCALE}`,
+			);
+			return loadContent(DEFAULT_LOCALE);
+		}
 		throw new Error(
-			`no content for locale "${locale}" — known locales: ${LOCALES.join(", ")}`,
+			`no content for "${DEFAULT_LOCALE}" — known locales: ${LOCALES.join(", ")}`,
 		);
 	}
 

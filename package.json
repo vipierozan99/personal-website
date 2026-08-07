@@ -53,9 +53,9 @@
 			"limit": "8 kB"
 		},
 		{
-			"name": "content chunk (en)",
-			"path": "dist/assets/site.en-*.js",
-			"limit": "4 kB"
+			"name": "content chunks (all locales)",
+			"path": "dist/assets/site-*.js",
+			"limit": "10 kB"
 		}
 	]
 }
