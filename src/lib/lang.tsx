@@ -8,12 +8,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import {
-	cachedContent,
-	DEFAULT_LOCALE,
-	loadContent,
-	prefetchContent,
-} from "../content/load";
+import { DEFAULT_LOCALE, siteContent } from "../content/load";
 import type { SiteContent } from "../content/model";
 import { syncLanguage, translator } from "../i18n";
 import { crossfade } from "./transitions";
@@ -65,14 +60,14 @@ export function LanguageProvider({
 }) {
 	const [lang, setLang] = useState(DEFAULT_LOCALE);
 	const [content, setContent] = useState(
-		() => cachedContent(DEFAULT_LOCALE) as SiteContent,
+		() => siteContent.cached(DEFAULT_LOCALE) as SiteContent,
 	);
 	const [pending, setPending] = useState(false);
 	const wanted = useRef(DEFAULT_LOCALE);
 
 	if (!content) {
 		throw new Error(
-			"LanguageProvider mounted before loadContent(DEFAULT_LOCALE) settled",
+			"LanguageProvider mounted before siteContent.load(DEFAULT_LOCALE) settled",
 		);
 	}
 
@@ -96,7 +91,7 @@ export function LanguageProvider({
 		// in the same commit, the one case there is a coherent before and after
 		// to cross-fade between. Otherwise the strings lead and the prose follows
 		// when its chunk lands.
-		const cached = cachedContent(next);
+		const cached = siteContent.cached(next);
 		if (cached) {
 			swap(cached);
 			return;
@@ -104,7 +99,8 @@ export function LanguageProvider({
 
 		setLang(next);
 		setPending(true);
-		loadContent(next)
+		siteContent
+			.load(next)
 			.then((loaded) => {
 				if (wanted.current === next) swap(loaded);
 			})
@@ -114,7 +110,7 @@ export function LanguageProvider({
 	}, [urlLang]);
 
 	const value = useMemo<Language>(
-		() => ({ lang, content, t, pending, prefetch: prefetchContent }),
+		() => ({ lang, content, t, pending, prefetch: siteContent.prefetch }),
 		[lang, content, t, pending],
 	);
 

@@ -1,7 +1,7 @@
 import { createMemoryHistory, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { renderToString } from "react-dom/server";
-import { DEFAULT_LOCALE, loadContent } from "./content/load";
+import { cvContent, DEFAULT_LOCALE, siteContent } from "./content/load";
 import { createI18n } from "./i18n";
 import { createAppRouter } from "./router";
 
@@ -13,10 +13,9 @@ import { createAppRouter } from "./router";
  * hydration, so the search param plays no part here.
  */
 export async function render(pathname: string) {
-	const [, i18n] = await Promise.all([
-		loadContent(DEFAULT_LOCALE),
-		createI18n(DEFAULT_LOCALE),
-	]);
+	const warm: Promise<unknown>[] = [siteContent.load(DEFAULT_LOCALE)];
+	if (pathname.startsWith("/cv")) warm.push(cvContent.load(DEFAULT_LOCALE));
+	const [i18n] = await Promise.all([createI18n(DEFAULT_LOCALE), ...warm]);
 	const router = createAppRouter(
 		i18n,
 		createMemoryHistory({ initialEntries: [pathname] }),

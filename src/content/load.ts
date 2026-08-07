@@ -1,89 +1,101 @@
+import type { CvDocument } from "./cv-model";
 import { buildContent, type SiteContent, type SiteDocument } from "./model";
 
+export const DEFAULT_LOCALE = "en";
+
+export type Loader<T> = {
+	/** Locales that actually have this document. */
+	LOCALES: readonly string[];
+	/** Synchronous — decides whether a switch can run inside one view transition. */
+	cached(locale: string): T | undefined;
+	load(locale: string): Promise<T>;
+	/** Warm a locale on hover/focus; failures resurface on the real load. */
+	prefetch(locale: string): void;
+};
+
 /**
- * One lazy chunk per language, from `src/content/<locale>/site.md`. The `.md`
+ * One lazy chunk per language, from `src/content/<locale>/<name>`. The `.md`
  * files are parsed to an AST by the `comark()` Vite plugin at build time and
  * reach the browser as plain JSON, so no parser ships — and the glob keeps
  * each language out of the app bundle, so a session only ever downloads the
  * ones it is shown.
  */
-const content = import.meta.glob("./*/site.md", {
-	import: "default",
-}) as Record<string, () => Promise<unknown>>;
+function createLoader<T>(
+	modules: Record<string, () => Promise<unknown>>,
+	name: string,
+	build: (module: unknown) => T,
+): Loader<T> {
+	const path = (locale: string) => `./${locale}/${name}`;
 
-const PREFIX = "./";
-const SUFFIX = "/site.md";
+	const LOCALES = Object.keys(modules)
+		.map((key) => key.slice("./".length, -`/${name}`.length))
+		.sort();
 
-const path = (locale: string) => `${PREFIX}${locale}${SUFFIX}`;
+	/** The dynamic import is cached by the module registry anyway; this map is
+	 *  what answers "is this language ready?" synchronously. */
+	const loaded = new Map<string, T>();
 
-export const DEFAULT_LOCALE = "en";
+	/** Loads already under way, so concurrent callers share one build — the
+	 *  result cache alone cannot dedupe them, it is written after the await. */
+	const inflight = new Map<string, Promise<T>>();
 
-export const LOCALES = Object.keys(content)
-	.map((key) => key.slice(PREFIX.length, -SUFFIX.length))
-	.sort();
+	const load = (locale: string): Promise<T> => {
+		const hit = loaded.get(locale);
+		if (hit) return Promise.resolve(hit);
 
-function isLocale(value: string): boolean {
-	return path(value) in content;
-}
+		const pending = inflight.get(locale);
+		if (pending) return pending;
 
-/**
- * Content already in memory. The dynamic import is itself cached by the module
- * registry, so this is not about avoiding a second fetch — it is about being
- * able to answer "is this language ready?" *synchronously*, which is what
- * decides whether switching to it can run inside one view transition.
- */
-const loaded = new Map<string, SiteContent>();
-
-/** Loads already under way, so concurrent callers share one build — the
- *  result cache alone cannot dedupe them, it is only written after the await. */
-const inflight = new Map<string, Promise<SiteContent>>();
-
-export function cachedContent(locale: string): SiteContent | undefined {
-	return loaded.get(locale);
-}
-
-export function loadContent(locale: string): Promise<SiteContent> {
-	const hit = loaded.get(locale);
-	if (hit) return Promise.resolve(hit);
-
-	const pending = inflight.get(locale);
-	if (pending) return pending;
-
-	const load = content[path(locale)];
-	if (!load) {
-		// A locale that exists in the UI but has no document yet reads in
-		// English rather than crashing — deliberately NOT cached under the
-		// requested locale, so adding the file later just starts working.
-		if (locale !== DEFAULT_LOCALE) {
-			console.warn(
-				`no src/content/${locale}/site.md — falling back to ${DEFAULT_LOCALE}`,
+		const module = modules[path(locale)];
+		if (!module) {
+			// A locale that exists in the UI but has no document yet reads in
+			// English rather than crashing — deliberately NOT cached under the
+			// requested locale, so adding the file later just starts working.
+			if (locale !== DEFAULT_LOCALE) {
+				console.warn(
+					`no src/content/${locale}/${name} — falling back to ${DEFAULT_LOCALE}`,
+				);
+				return load(DEFAULT_LOCALE);
+			}
+			return Promise.reject(
+				new Error(
+					`no ${name} for "${DEFAULT_LOCALE}" — known locales: ${LOCALES.join(", ")}`,
+				),
 			);
-			return loadContent(DEFAULT_LOCALE);
 		}
-		return Promise.reject(
-			new Error(
-				`no content for "${DEFAULT_LOCALE}" — known locales: ${LOCALES.join(", ")}`,
-			),
-		);
-	}
 
-	const promise = load()
-		.then((document) => {
-			const built = buildContent(document as SiteDocument);
-			loaded.set(locale, built);
-			return built;
-		})
-		.finally(() => inflight.delete(locale));
-	inflight.set(locale, promise);
-	return promise;
+		const promise = module()
+			.then((loadedModule) => {
+				const built = build(loadedModule);
+				loaded.set(locale, built);
+				return built;
+			})
+			.finally(() => inflight.delete(locale));
+		inflight.set(locale, promise);
+		return promise;
+	};
+
+	return {
+		LOCALES,
+		cached: (locale) => loaded.get(locale),
+		load,
+		prefetch: (locale) => {
+			if (loaded.has(locale) || !(path(locale) in modules)) return;
+			void load(locale).catch(() => {});
+		},
+	};
 }
 
-/**
- * Warms a locale so selecting it later is synchronous. Called on hover and
- * focus of a language control; a failure here is not worth surfacing, since
- * the real load will report it.
- */
-export function prefetchContent(locale: string): void {
-	if (loaded.has(locale) || !isLocale(locale)) return;
-	void loadContent(locale).catch(() => {});
-}
+export const siteContent = createLoader<SiteContent>(
+	import.meta.glob("./*/site.md", { import: "default" }),
+	"site.md",
+	(module) => buildContent(module as SiteDocument),
+);
+
+export const cvContent = createLoader<CvDocument>(
+	import.meta.glob("./*/cv.md", { import: "default" }),
+	"cv.md",
+	// Sheets are built from the AST at render time (see components/cv); the
+	// document itself is the model.
+	(module) => module as CvDocument,
+);

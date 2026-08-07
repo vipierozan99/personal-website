@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
-import { DEFAULT_LOCALE, LOCALES } from "../content/load";
+import { DEFAULT_LOCALE, siteContent } from "../content/load";
 import { useLanguage, useT } from "../lib/lang";
 import type { ExtraLang } from "../routes/__root";
 
@@ -15,14 +15,14 @@ export function LangSwitch() {
 	const { lang, prefetch } = useLanguage();
 	const navigate = useNavigate();
 
-	if (LOCALES.length < 2) return null;
+	if (siteContent.LOCALES.length < 2) return null;
 
 	return (
 		// A labelled set of related controls is what a fieldset is for; the
 		// legend is only ever heard.
 		<fieldset className="flex gap-1">
 			<legend className="sr-only">{t("header.language")}</legend>
-			{LOCALES.map((code) => {
+			{siteContent.LOCALES.map((code) => {
 				const current = code === lang;
 				return (
 					<button
