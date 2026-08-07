@@ -1,0 +1,238 @@
+@import "tailwindcss";
+
+/* Rare escape hatch for utilities that must branch on theme; the token system
+   below makes it unnecessary for color. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * All three faces are served from this origin as the Latin variable subsets
+ * Google itself serves, byte for byte. `swap` keeps the text legible in the
+ * fallback while they load. The subset stops at Latin, so marks outside it —
+ * ☾, ☀, ⧉, ↗ — come from the system stack on purpose.
+ */
+@font-face {
+	font-family: "Newsreader";
+	font-style: normal;
+	font-weight: 200 800;
+	font-display: swap;
+	src: url("/fonts/newsreader-latin.woff2") format("woff2");
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+		U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+		U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "Newsreader";
+	font-style: italic;
+	font-weight: 200 800;
+	font-display: swap;
+	src: url("/fonts/newsreader-italic-latin.woff2") format("woff2");
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+		U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+		U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "IBM Plex Sans";
+	font-style: normal;
+	font-weight: 100 700;
+	font-display: swap;
+	src: url("/fonts/ibm-plex-sans-latin.woff2") format("woff2");
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+		U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+		U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "JetBrains Mono";
+	font-style: normal;
+	font-weight: 100 800;
+	font-display: swap;
+	src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+		U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+		U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * The palette comes off three base colours per theme; every other slot is mixed
+ * from them below. Mixing *toward the opposite pole* is what makes one formula
+ * serve both themes: paper mixed toward ink darkens on the light theme and
+ * lightens on the dark one, which is the direction each wants.
+ *
+ * The bases are the design's values converted to oklch, so a re-theme is three
+ * declarations per theme. `--accent-2` is a fourth base: light wants it brighter
+ * and *more* saturated than the accent, dark wants it brighter and *less* — no
+ * single formula points both ways.
+ */
+:root {
+	color-scheme: light;
+	/* Warm paper, near-black ink, oxide accent. */
+	--paper: oklch(98.4% 0.004 91);
+	--ink: oklch(20% 0.014 92);
+	--accent: oklch(41% 0.1 38);
+	--accent-2: oklch(55.5% 0.145 40);
+}
+
+[data-theme="dark"] {
+	color-scheme: dark;
+	/* Cool slate, warm off-white ink, apricot accent. */
+	--paper: oklch(25.5% 0.005 250);
+	--ink: oklch(94% 0.012 84);
+	--accent: oklch(74% 0.13 45);
+	--accent-2: oklch(78.5% 0.1 48);
+}
+
+:root {
+	/* Surfaces */
+	--paper-2: color-mix(in oklab, var(--paper) 97.5%, var(--ink));
+	--band: color-mix(in oklab, var(--paper) 94%, black);
+	--header-bg: oklch(from var(--paper) l c h / 0.92);
+	--chip-bg: color-mix(in oklab, var(--paper) 93.5%, var(--ink));
+	--row-hover: color-mix(in oklab, var(--paper) 95.5%, var(--ink));
+
+	/* Text, ink through faint */
+	--ink-2: color-mix(in oklab, var(--ink) 90%, var(--paper));
+	--ink-3: color-mix(in oklab, var(--ink) 76%, var(--paper));
+	--mut: color-mix(in oklab, var(--ink) 63%, var(--paper));
+	--mut-2: color-mix(in oklab, var(--ink) 49%, var(--paper));
+	--faint: color-mix(in oklab, var(--ink) 38%, var(--paper));
+	--faint-2: color-mix(in oklab, var(--ink) 25%, var(--paper));
+
+	/* Rules */
+	--rule: color-mix(in oklab, var(--ink) 10.5%, var(--paper));
+	--rule-2: color-mix(in oklab, var(--ink) 8%, var(--paper));
+
+	/* Accent tints */
+	--accent-line: color-mix(in oklab, var(--accent) 33%, var(--paper));
+	--accent-soft: color-mix(in oklab, var(--accent) 38%, var(--paper));
+	--hover-bg: color-mix(in oklab, var(--accent) 10%, var(--paper));
+	--on-accent: var(--paper);
+}
+
+[data-theme="dark"] {
+	/* The desk behind the sheet darkens on both themes, which "toward ink"
+	   cannot express in the dark one; on-accent likewise must stay dark under a
+	   light accent. Documented overrides, not part of the formula system. */
+	--band: color-mix(in oklab, var(--paper) 82%, black);
+	--on-accent: color-mix(in oklab, var(--paper) 88%, black);
+}
+
+@theme inline {
+	/* Bridge, not values: `inline` keeps utilities compiled to var() references,
+	   so everything flips with data-theme and no dark: variants exist anywhere. */
+	--color-*: initial;
+	--color-paper: var(--paper);
+	--color-paper-2: var(--paper-2);
+	--color-band: var(--band);
+	--color-header: var(--header-bg);
+	--color-chip: var(--chip-bg);
+	--color-row-hover: var(--row-hover);
+	--color-ink: var(--ink);
+	--color-ink-2: var(--ink-2);
+	--color-ink-3: var(--ink-3);
+	--color-mut: var(--mut);
+	--color-mut-2: var(--mut-2);
+	--color-faint: var(--faint);
+	--color-faint-2: var(--faint-2);
+	--color-rule: var(--rule);
+	--color-rule-2: var(--rule-2);
+	--color-accent: var(--accent);
+	--color-accent-2: var(--accent-2);
+	--color-accent-line: var(--accent-line);
+	--color-accent-soft: var(--accent-soft);
+	--color-hover: var(--hover-bg);
+	--color-on-accent: var(--on-accent);
+}
+
+@theme {
+	--font-serif: "Newsreader", ui-serif, Georgia, serif;
+	--font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/*
+ * Reader preferences. The inline script in index.html restores the saved data-*
+ * attributes before first paint, so prose renders with the reader's metrics and
+ * hydration never sees different markup — the attributes live outside React.
+ * Defaults need no attribute at all.
+ */
+:root {
+	--reader-measure: 68ch;
+	--reader-size: 18px;
+	--reader-font: var(--font-serif);
+}
+[data-measure="58"] {
+	--reader-measure: 58ch;
+}
+[data-measure="80"] {
+	--reader-measure: 80ch;
+}
+[data-size="16"] {
+	--reader-size: 16px;
+}
+[data-size="21"] {
+	--reader-size: 21px;
+}
+[data-face="sans"] {
+	--reader-font: var(--font-sans);
+}
+[data-face="mono"] {
+	--reader-font: var(--font-mono);
+}
+
+:root {
+	/* Global animation speed factor. 0 freezes every transition; browsers expose
+	   no user-facing speed control, only the binary preference below. */
+	--anim: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--anim: 0;
+	}
+}
+
+/*
+ * Shadows Tailwind's own `duration-*` so every existing `duration-300` picks up
+ * the factor with no call-site changes. Cascade order does the work: this rule
+ * is emitted after the built-in one for the same class name.
+ */
+@utility duration-* {
+	--tw-duration: calc(--value(integer) * 1ms * var(--anim, 1));
+	transition-duration: calc(--value(integer) * 1ms * var(--anim, 1));
+	--tw-duration: calc(--value([duration]) * var(--anim, 1));
+	transition-duration: calc(--value([duration]) * var(--anim, 1));
+}
+
+/*
+ * Theme toggle, language switch, project sort, accordion — all open a view
+ * transition. The animations are the browser's defaults; these only put their
+ * lengths under the same factor as everything else, so reduced motion collapses
+ * them to instant swaps.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: calc(340ms * var(--anim, 1));
+	animation-timing-function: ease;
+}
+
+::view-transition-group(*) {
+	animation-duration: calc(400ms * var(--anim, 1));
+	animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+	@apply bg-paper text-ink font-sans;
+}
+
+a {
+	@apply text-accent;
+}
+a:hover {
+	text-decoration: underline;
+}

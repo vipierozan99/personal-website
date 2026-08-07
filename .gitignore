@@ -1,0 +1,8 @@
+node_modules
+dist
+dist-ssr
+analyze
+*.local
+.DS_Store
+.serena
+.tanstack

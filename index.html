@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    Theme and reader preferences, restored before the stylesheet so the first
+    paint is already correct — a module script is deferred and would flash the
+    light theme at every dark-mode visitor. The app bundle deliberately has no
+    copy of this logic: React never renders theme-dependent markup, these
+    attributes are the whole mechanism.
+  -->
+  <script>
+    (() => {
+      try {
+        var d = document.documentElement;
+        var t = localStorage.theme;
+        if (t !== "dark" && t !== "light")
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        d.dataset.theme = t;
+        var r = JSON.parse(localStorage.reader || "null") || {};
+        if (r.face === "sans" || r.face === "mono") d.dataset.face = r.face;
+        if (r.measure === 58 || r.measure === 80) d.dataset.measure = String(r.measure);
+        if (r.size === 16 || r.size === 21) d.dataset.size = String(r.size);
+      } catch (e) { }
+    })();
+  </script>
+
+  <!-- Self-hosted; preloads start the fetches off the document itself, so none
+       waits for the stylesheet that names it. crossorigin even though they are
+       same-origin: fonts fetch in CORS mode, and a preload whose mode does not
+       match is a second download rather than a hit. -->
+  <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+  <title>Victor Pierozan — Backend and Systems Engineer</title>
+  <meta name="description"
+    content="Victor Pierozan is a backend and systems engineer in Berlin, technical lead at Noah Labs, building cardiac medical devices." />
+  <meta name="author" content="Victor Elízio Pierozan" />
+  <link rel="canonical" href="https://victor.pierozan.com/" />
+
+  <!-- Unfurls are built without running JS, so everything they read has to be
+       static in this document. -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:site_name" content="Victor Pierozan" />
+  <meta property="og:title" content="Victor Pierozan — Backend and Systems Engineer" />
+  <meta property="og:description"
+    content="Victor Pierozan is a backend and systems engineer in Berlin, technical lead at Noah Labs, building cardiac medical devices." />
+  <meta property="og:url" content="https://victor.pierozan.com/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="profile:first_name" content="Victor" />
+  <meta property="profile:last_name" content="Pierozan" />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Victor Elízio Pierozan",
+      "jobTitle": "Technical Lead",
+      "email": "mailto:victorpierozan@gmail.com",
+      "url": "https://victor.pierozan.com/",
+      "sameAs": ["https://gitlab.com/vipierozan99"],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Berlin",
+        "addressCountry": "DE"
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
