@@ -71,20 +71,43 @@
  */
 :root {
 	color-scheme: light;
-	/* Warm paper, near-black ink, oxide accent. */
-	--paper: oklch(98.5% 0.004 91);
-	--ink: oklch(19.5% 0.012 100);
-	--accent: oklch(42.2% 0.105 37);
-	--accent-2: oklch(58.5% 0.152 39);
+	/* Warm paper, near-black ink, oxide accent — and the dark counterparts:
+	   cool slate, warm off-white, apricot. Named so a scope can pin either set. */
+	--paper-light: oklch(98.5% 0.004 91);
+	--ink-light: oklch(19.5% 0.012 100);
+	--accent-light: oklch(42.2% 0.105 37);
+	--accent-2-light: oklch(58.5% 0.152 39);
+	--paper-dark: oklch(26.4% 0.006 258);
+	--ink-dark: oklch(95% 0.011 85);
+	--accent-dark: oklch(73.4% 0.138 44);
+	--accent-2-dark: oklch(77.9% 0.11 50);
+
+	--paper: var(--paper-light);
+	--ink: var(--ink-light);
+	--accent: var(--accent-light);
+	--accent-2: var(--accent-2-light);
 }
 
 [data-theme="dark"] {
 	color-scheme: dark;
-	/* Cool slate, warm off-white ink, apricot accent. */
-	--paper: oklch(26.4% 0.006 258);
-	--ink: oklch(95% 0.011 85);
-	--accent: oklch(73.4% 0.138 44);
-	--accent-2: oklch(77.9% 0.11 50);
+	--paper: var(--paper-dark);
+	--ink: var(--ink-dark);
+	--accent: var(--accent-dark);
+	--accent-2: var(--accent-2-dark);
+}
+
+/*
+ * The CV sheets are paper in both themes, like a PDF preview. Pinning the four
+ * bases (and color-scheme, which the light-dark() tokens read) recomputes the
+ * whole derived palette to its light values inside the subtree — unregistered
+ * custom properties substitute at point of use, so nothing is duplicated.
+ */
+.sheet-light {
+	color-scheme: light;
+	--paper: var(--paper-light);
+	--ink: var(--ink-light);
+	--accent: var(--accent-light);
+	--accent-2: var(--accent-2-light);
 }
 
 /*
@@ -261,6 +284,90 @@
 	transition-duration: calc(--value(integer) * 1ms * var(--anim, 1));
 	--tw-duration: calc(--value([duration]) * var(--anim, 1));
 	transition-duration: calc(--value([duration]) * var(--anim, 1));
+}
+
+/*
+ * The CV document's prose scopes. Its markdown arrives as plain h3/ul/p — the
+ * document says what a thing is, never what size it is — and these name the
+ * places that prose lands so the same tag can be two sizes. The px values are
+ * print typography, drawn against a 21cm sheet, deliberately outside the
+ * site's rem scale; the colors are the shared token system.
+ */
+@utility prose-role {
+	& h3 {
+		@apply font-semibold text-[19px] text-accent tracking-[-0.01em];
+	}
+
+	& ul {
+		@apply flex list-disc flex-col gap-[3px] pl-[15px] text-[14.5px] text-ink-2 leading-[1.45];
+	}
+}
+
+@utility prose-entry {
+	& h3 {
+		@apply mb-[3px] font-semibold text-[16px] text-accent tracking-[-0.01em];
+	}
+
+	/* The opening qualification carries the block, so it keeps the role-title
+	   size; the extra `:first-child` outranks the rule above. */
+	& > *:first-child h3 {
+		@apply text-[19px];
+	}
+
+	& p {
+		@apply text-[14.5px] text-ink-2 leading-[1.45];
+	}
+}
+
+@utility prose-closing {
+	& p {
+		@apply text-[15px] text-ink-2 text-pretty leading-[1.5];
+	}
+
+	& ul {
+		@apply list-disc pl-[15px] text-[15px] text-ink-2 leading-[1.5];
+	}
+}
+
+/*
+ * Hover spotlight on the CV's role rows: pointing at one dims its neighbours.
+ * Deliberately CSS rather than JS, so it cannot leak into the PDF — there is
+ * no state to clear before printing, because there is no state.
+ */
+[data-role-row] {
+	transition: opacity calc(200ms * var(--anim, 1)) ease;
+}
+
+@media (hover: hover) {
+	main:has([data-role-row]:hover) [data-role-row]:not(:hover) {
+		opacity: 0.55;
+	}
+}
+
+@page {
+	/* Must match the fixed 21cm × 29.7cm sheets in components/cv/Sheet.tsx;
+	   `auto` lets the printer pick Letter, which spills every sheet. */
+	size: A4;
+	margin: 0mm;
+}
+
+@media print {
+	* {
+		/* biome-ignore-start lint/complexity/noImportantStyles: browsers drop
+		   backgrounds and colours when printing unless the adjustment is forced,
+		   and the rule's fix is to delete the declaration. */
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+		/* biome-ignore-end lint/complexity/noImportantStyles: see above */
+	}
+
+	/* Whatever the pointer rested on when the print dialog opened is a screen
+	   state, not a document state. */
+	[data-role-row] {
+		/* biome-ignore lint/complexity/noImportantStyles: has to beat the hover
+		   rule's specificity so a hovered row does not print faded. */
+		opacity: 1 !important;
+	}
 }
 
 /*

@@ -40,6 +40,15 @@ export default defineConfig({
 		// the browser to discover it one round trip later.
 		manifest: true,
 	},
+	define: {
+		/**
+		 * Anchors the "now" a live CV role's duration is measured against. The
+		 * client bundle and the SSR pass are separate `vite build` invocations,
+		 * so this is rounded down to the start of the UTC day: both evaluate it
+		 * to the same number and hydration sees identical text.
+		 */
+		__BUILD_TIME__: new Date().setUTCHours(0, 0, 0, 0),
+	},
 	test: {
 		environment: "node",
 	},

@@ -11,7 +11,7 @@ export function Header() {
 	const { person, role } = content.frontmatter;
 
 	return (
-		<header className="sticky top-0 z-10 flex min-h-header flex-wrap items-center gap-x-4 gap-y-1 border-accent-line border-b bg-header px-gutter py-1 backdrop-blur-md">
+		<header className="sticky top-0 z-10 flex min-h-header flex-wrap items-center gap-x-4 gap-y-1 border-accent-line border-b bg-header px-gutter py-1 backdrop-blur-md print:hidden">
 			<span className="whitespace-nowrap font-serif text-base text-ink">
 				{person.name}
 			</span>

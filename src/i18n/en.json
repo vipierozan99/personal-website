@@ -66,5 +66,19 @@
 	"contact": {
 		"copy": "Copy email",
 		"copied": "✓ copied"
+	},
+	"cv": {
+		"copyEmail": "copy {email}",
+		"copied": "copied ✓",
+		"pdf": "PDF",
+		"downloadPdf": "Download PDF",
+		"colophon": "A digital version of my CV, built with React and TailwindCSS.",
+		"source": "Source on GitLab",
+		"loading": "Loading…",
+		"footer": "{name} — CV",
+		"continued": "cont.",
+		"present": "present",
+		"years": "{count, plural, one {# yr} other {# yr}}",
+		"months": "{count, plural, one {# mo} other {# mo}}"
 	}
 }

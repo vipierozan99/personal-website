@@ -15,5 +15,11 @@ export function crossfade(swap: () => void) {
 		swap();
 		return;
 	}
-	document.startViewTransition(() => flushSync(swap));
+	const transition = document.startViewTransition(() => flushSync(swap));
+	// Two overlapping transitions skip the first — e.g. landing on
+	// /cv?lang=de, where the site content and the CV document each swap. The
+	// swap itself still commits; only the animation is dropped, so the
+	// AbortError the skipped transition rejects with is noise, not a failure.
+	transition.ready.catch(() => {});
+	transition.finished.catch(() => {});
 }

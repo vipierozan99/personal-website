@@ -5,3 +5,6 @@ declare module "*.md" {
 	const document: unknown;
 	export default document;
 }
+
+/** Start of the UTC day the bundle was built; see `define` in vite.config.ts. */
+declare const __BUILD_TIME__: number;

@@ -21,7 +21,7 @@ const CvRoute = CvRouteImport.update({
   id: '/cv',
   path: '/cv',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/cv.lazy').then((d) => d.Route))
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute

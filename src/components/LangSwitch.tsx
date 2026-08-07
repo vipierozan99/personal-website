@@ -28,6 +28,7 @@ export function LangSwitch() {
 					<button
 						key={code}
 						type="button"
+						lang={code}
 						aria-current={current || undefined}
 						onClick={() =>
 							navigate({

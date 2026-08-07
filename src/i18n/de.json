@@ -66,5 +66,19 @@
 	"contact": {
 		"copy": "Copy email",
 		"copied": "✓ copied"
+	},
+	"cv": {
+		"copyEmail": "{email} kopieren",
+		"copied": "kopiert ✓",
+		"pdf": "PDF",
+		"downloadPdf": "PDF herunterladen",
+		"colophon": "Eine digitale Fassung meines Lebenslaufs, gebaut mit React und TailwindCSS.",
+		"source": "Quellcode auf GitLab",
+		"loading": "Lädt…",
+		"footer": "{name} — Lebenslauf",
+		"continued": "Forts.",
+		"present": "heute",
+		"years": "{count, plural, one {# J.} other {# J.}}",
+		"months": "{count, plural, one {# Mon.} other {# Mon.}}"
 	}
 }
