@@ -9,7 +9,7 @@ export function People() {
 	return (
 		<section id="people" className="flex flex-col">
 			<SectionHeader label={t("people.title")}>
-				<span className="font-mono text-faint text-label">
+				<span className="font-mono text-faint text-tag">
 					{t("people.count", { count: content.people.length })}
 				</span>
 			</SectionHeader>
@@ -27,7 +27,7 @@ export function People() {
 								<span className="font-mono text-mut-2 text-tag uppercase tracking-tag">
 									{person.subject}
 								</span>
-								<span className="flex flex-col gap-1 font-mono text-ui">
+								<span className="flex flex-col gap-1 font-mono text-tag">
 									{person.links.map((link) => (
 										<a key={link.label} href={link.href}>
 											{link.label}
@@ -35,7 +35,7 @@ export function People() {
 									))}
 								</span>
 							</div>
-							<div className="max-w-[52ch] flex-1 basis-75 text-pretty font-serif text-ink-2 text-person leading-prose">
+							<div className="max-w-[52ch] flex-1 basis-75 text-pretty font-serif text-base text-ink-2 leading-prose">
 								<Prose value={person.note} />
 							</div>
 						</div>

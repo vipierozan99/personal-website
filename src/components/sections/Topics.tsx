@@ -42,7 +42,7 @@ export function Topics() {
 						>
 							<span
 								className={clsx(
-									"font-mono text-label transition-colors duration-150",
+									"font-mono text-tag transition-colors duration-150",
 									hover && lit ? "text-accent-2" : "text-faint-2",
 								)}
 							>
@@ -58,7 +58,7 @@ export function Topics() {
 									{topic.label}
 								</span>
 								{glosses && (
-									<span className="max-w-[52ch] text-blurb text-mut-2 leading-normal">
+									<span className="max-w-[52ch] text-mut-2 text-sm leading-normal">
 										<InlineProse value={topic.gloss} />
 									</span>
 								)}

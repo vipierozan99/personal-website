@@ -103,9 +103,7 @@ function Row({
 				onBlur={() => setHover(null)}
 				className="grid w-full cursor-pointer grid-cols-[2rem_1fr_1rem] items-baseline gap-3 py-3 pr-1.5 text-left transition-colors duration-150 hover:bg-row-hover"
 			>
-				<span className="font-mono text-accent-2 text-label">
-					{project.year}
-				</span>
+				<span className="font-mono text-accent-2 text-tag">{project.year}</span>
 				<span className="flex flex-col gap-1">
 					<span className="flex flex-wrap items-baseline gap-3">
 						<span className="font-serif text-accent text-title">
@@ -115,12 +113,12 @@ function Row({
 							{project.meta}
 						</span>
 					</span>
-					<span className="text-blurb text-ink-3 leading-normal">
+					<span className="text-ink-3 text-sm leading-normal">
 						<InlineProse value={project.blurb} />
 					</span>
 				</span>
 				<span
-					className="justify-self-end font-mono text-blurb text-faint"
+					className="justify-self-end font-mono text-faint text-sm"
 					aria-hidden
 				>
 					{open ? "−" : "+"}
@@ -152,7 +150,7 @@ function Row({
 
 /** Internal targets route through the router; everything else is a plain a. */
 function ProjectLink({ href, label }: { href: string; label: string }) {
-	const className = "self-start font-mono text-ui";
+	const className = "self-start font-mono text-tag";
 	return href.startsWith("/") ? (
 		<Link to={href} className={className}>
 			{label}

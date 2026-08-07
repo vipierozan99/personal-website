@@ -175,22 +175,14 @@
 	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
 	/*
-	 * Type scale, by role rather than size. rem throughout so a reader's font
-	 * preference scales the whole page; the px the design was drawn in are in
-	 * the comments. The mono microtype (tag → meta) is deliberately finer-
-	 * grained than Tailwind's default scale, which stops at 12px.
+	 * Type, by role. Four custom sizes; everything else is Tailwind's own
+	 * xs/sm/base/lg/2xl. rem throughout so a reader's font preference scales
+	 * the whole page.
 	 */
-	--text-tag: 0.59375rem; /* 9.5px — uppercase meta tags, numbers */
-	--text-label: 0.625rem; /* 10px — section labels, control buttons */
-	--text-ui: 0.65625rem; /* 10.5px — pills, nav links, contact rows */
-	--text-meta: 0.71875rem; /* 11.5px — footer link row */
-	--text-blurb: 0.84375rem; /* 13.5px — project blurbs, glosses */
-	--text-person: 1.03125rem; /* 16.5px — people notes */
-	--text-brand: 1.0625rem; /* 17px — header wordmark */
-	--text-title: 1.375rem; /* 22px — project titles */
-	--text-display: clamp(2.375rem, 6vw, 3.875rem); /* h1 */
-	--text-subtitle: clamp(1.1875rem, 2.5vw, 1.4375rem);
-	--text-quote: clamp(1.1875rem, 2.5vw, 1.3125rem);
+	--text-tag: 0.625rem; /* 10px — ALL mono UI: tags, labels, pills, nav */
+	--text-title: 1.375rem; /* 22px — serif headings: projects, people */
+	--text-lede: clamp(1.1875rem, 2.5vw, 1.375rem); /* subtitle, pull quote */
+	--text-display: clamp(2.375rem, 6vw, 3.875rem); /* the h1 */
 
 	/* em, always — tracking must follow its own font size. */
 	--tracking-tag: 0.14em; /* uppercase micro meta */

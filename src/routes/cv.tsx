@@ -14,7 +14,7 @@ function Cv() {
 				Moving in soon. For now it lives at{" "}
 				<a href="https://victor.pierozan.com/">victor.pierozan.com</a>.
 			</p>
-			<Link to="/" className="font-mono text-ui">
+			<Link to="/" className="font-mono text-tag">
 				← Back
 			</Link>
 		</main>

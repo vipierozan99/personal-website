@@ -37,7 +37,7 @@ export function Sidebar() {
 				<ReaderControls />
 				<div className="h-px bg-rule" />
 
-				<div className="font-mono text-mut-2 text-ui leading-prose">
+				<div className="font-mono text-mut-2 text-tag leading-prose">
 					{content.frontmatter.location}
 					<br />
 					{content.frontmatter.before}
@@ -45,7 +45,7 @@ export function Sidebar() {
 
 				<HintBox />
 
-				<div className="flex flex-col gap-2 font-mono text-ink-3 text-ui">
+				<div className="flex flex-col gap-2 font-mono text-ink-3 text-tag">
 					<CopyEmailRow email={person.email} />
 					<a
 						href={person.gitlab.href}
@@ -89,7 +89,7 @@ function SectionNav() {
 						className="flex items-baseline gap-2 text-inherit hover:no-underline"
 					>
 						<span className="font-mono text-faint-2 text-tag">{section.n}</span>
-						<span className="font-mono text-mut-2 text-ui uppercase tracking-widest hover:text-accent">
+						<span className="font-mono text-mut-2 text-tag uppercase tracking-widest hover:text-accent">
 							{section.label}
 						</span>
 					</a>
@@ -153,7 +153,7 @@ function ReaderControls() {
 				<span className="flex-1 font-bold font-mono text-accent text-tag uppercase tracking-banner">
 					{t("reading.title")}
 				</span>
-				<span className="font-mono text-accent text-ui" aria-hidden>
+				<span className="font-mono text-accent text-tag" aria-hidden>
 					{open ? "−" : "+"}
 				</span>
 			</button>
@@ -186,12 +186,12 @@ function ReaderControls() {
 							</div>
 						</div>
 					))}
-					<div className="font-mono text-faint text-label leading-prose">
+					<div className="font-mono text-faint text-tag leading-prose">
 						{t("reading.kept")}{" "}
 						<button
 							type="button"
 							onClick={resetReader}
-							className="cursor-pointer font-mono text-accent text-label underline"
+							className="cursor-pointer font-mono text-accent text-tag underline"
 						>
 							{t("reading.reset")}
 						</button>
@@ -218,7 +218,7 @@ function HintBox() {
 	}
 
 	return (
-		<div className="border-accent-2 border-l-2 pl-3 font-mono text-accent text-ui leading-prose">
+		<div className="border-accent-2 border-l-2 pl-3 font-mono text-accent text-tag leading-prose">
 			{hint}
 		</div>
 	);
@@ -232,7 +232,7 @@ function CopyEmailRow({ email }: { email: string }) {
 			type="button"
 			onClick={copy}
 			title={t("contact.copy")}
-			className="flex cursor-pointer justify-between font-mono text-ink-3 text-ui transition-colors duration-150 hover:text-accent"
+			className="flex cursor-pointer justify-between font-mono text-ink-3 text-tag transition-colors duration-150 hover:text-accent"
 		>
 			<span>{copied ? t("contact.copied") : email}</span>
 			<span className="text-mut-2" aria-hidden>

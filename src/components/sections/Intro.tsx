@@ -15,7 +15,7 @@ export function Intro() {
 				<h1 className="font-normal font-serif text-display text-ink leading-display tracking-display">
 					{frontmatter.person.name}
 				</h1>
-				<p className="font-serif text-accent text-subtitle italic leading-snug">
+				<p className="font-serif text-accent text-lede italic leading-snug">
 					{frontmatter.subtitle}
 				</p>
 			</div>
@@ -25,7 +25,7 @@ export function Intro() {
 			</div>
 
 			<div id="care" className="border-accent border-l-[3px] py-1 pl-5">
-				<p className="m-0 text-pretty font-serif text-ink text-quote leading-normal">
+				<p className="m-0 text-pretty font-serif text-ink text-lede leading-normal">
 					<InlineProse value={intro.quote} />
 				</p>
 			</div>

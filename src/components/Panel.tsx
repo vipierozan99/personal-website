@@ -40,7 +40,7 @@ export function Panel({
 				<button
 					type="button"
 					onClick={toggle}
-					className="mt-3 cursor-pointer self-start whitespace-nowrap rounded-full border border-accent-line px-3 py-1.5 font-mono text-accent text-label uppercase tracking-widest transition-colors duration-150 hover:border-accent"
+					className="mt-3 cursor-pointer self-start whitespace-nowrap rounded-full border border-accent-line px-3 py-1.5 font-mono text-accent text-tag uppercase tracking-widest transition-colors duration-150 hover:border-accent"
 				>
 					{expanded
 						? t("panel.collapse", { label })

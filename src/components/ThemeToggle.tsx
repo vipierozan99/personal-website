@@ -9,7 +9,7 @@ export function ThemeToggle() {
 			type="button"
 			onClick={toggle}
 			title={t("theme.toggle")}
-			className="flex cursor-pointer items-center gap-1.5 rounded-full border border-accent-line px-3 py-1 font-mono text-accent text-ui uppercase tracking-widest transition-colors duration-150 hover:border-accent"
+			className="flex cursor-pointer items-center gap-1.5 rounded-full border border-accent-line px-3 py-1 font-mono text-accent text-tag uppercase tracking-widest transition-colors duration-150 hover:border-accent"
 		>
 			<span className="text-xs dark:hidden" aria-hidden>
 				☾
