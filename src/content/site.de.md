@@ -1,5 +1,5 @@
 ---
-locale: en
+locale: de
 role: Technical lead · Berlin
 subtitle: Backend and systems engineer in Berlin.
 location: Berlin, since 2022.

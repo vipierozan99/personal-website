@@ -1,6 +1,5 @@
 import { createMarkdownParser } from "comark";
 import { describe, expect, it } from "vitest";
-import { PEOPLE, PROJECTS, TOPICS } from "./data";
 import { buildContent, type SiteDocument } from "./model";
 // `?raw` bypasses the comark plugin, so the test drives the parser itself and
 // can also parse mutated copies of the source.
@@ -12,20 +11,24 @@ const document = async (markdown: string) =>
 	(await parse(markdown)) as SiteDocument;
 
 describe("buildContent", () => {
-	it("joins every fact in data.ts to its prose", async () => {
+	it("shapes projects, topics and people from the document", async () => {
 		const content = buildContent(await document(source));
 
-		expect(content.projects.map((project) => project.id)).toEqual(
-			PROJECTS.map((facts) => facts.id),
-		);
-		expect(content.topics).toHaveLength(TOPICS.length);
-		expect(content.people).toHaveLength(PEOPLE.length);
+		expect(content.projects).toHaveLength(4);
+		expect(content.topics).toHaveLength(15);
+		expect(content.people).toHaveLength(4);
 
-		for (const project of content.projects) {
-			expect(project.title).toBeTruthy();
-			expect(project.blurb.nodes).toHaveLength(1);
-			expect(project.detail.nodes.length).toBeGreaterThan(0);
-		}
+		const vox = content.projects.find((project) => project.id === "vox");
+		expect(vox?.year).toBe(2024);
+		expect(vox?.stack).toEqual([
+			"Python",
+			"Kafka",
+			"Postgres",
+			"Signal processing",
+		]);
+		expect(vox?.blurb.nodes.length).toBeGreaterThan(0);
+		expect(vox?.detail.nodes.length).toBeGreaterThan(0);
+
 		for (const topic of content.topics) {
 			expect(topic.label).toBeTruthy();
 			expect(topic.gloss.nodes.length).toBeGreaterThan(0);
@@ -39,17 +42,19 @@ describe("buildContent", () => {
 		expect(intro.lead.nodes.length).toBeGreaterThan(0);
 	});
 
-	it("throws when the markdown is missing an id data.ts expects", async () => {
-		const gutted = source.replace(/::project\{#vox[^}]*\}/, "::project{#nope}");
-		await expect(async () =>
-			buildContent(await document(gutted)),
-		).rejects.toThrow(/no ::project\{#vox\}/);
+	it("splits a trailing link paragraph out of a person's note", async () => {
+		const { people } = buildContent(await document(source));
+		expect(people[0].links).toEqual([
+			{ label: "site ↗", href: "#" },
+			{ label: "the post ↗", href: "#" },
+		]);
+		expect(people[0].note.nodes.length).toBeGreaterThan(0);
 	});
 
-	it("throws when the markdown has an id data.ts does not know", async () => {
-		const extra = `${source}\n::topic{#rogue label="Rogue"}\nGloss.\n::\n`;
+	it("throws when a topic names an unknown project", async () => {
+		const mangled = source.replace('projects="vox"', 'projects="nope"');
 		await expect(async () =>
-			buildContent(await document(extra)),
-		).rejects.toThrow(/topic#rogue/);
+			buildContent(await document(mangled)),
+		).rejects.toThrow(/unknown project "nope"/);
 	});
 });

@@ -1,19 +1,19 @@
 import type { ElementNode, MarkdownDocument, Node } from "comark";
 import { resolveAttributes } from "comark/utils";
-import {
-	PEOPLE,
-	type PersonFacts,
-	PROJECTS,
-	type ProjectFacts,
-	TOPICS,
-	type TopicFacts,
-} from "./data";
+// Types only: the zod schemas behind them are build-time, in vite/comark.ts.
 import type {
 	PersonAttrs,
 	ProjectAttrs,
 	SiteFrontmatter,
 	TopicAttrs,
 } from "./schema";
+
+/** "Python · Kafka" / "vox, site" → trimmed items; both separators accepted. */
+const splitList = (value: string | undefined): string[] =>
+	(value ?? "")
+		.split(/[·,]/)
+		.map((item) => item.trim())
+		.filter(Boolean);
 
 /**
  * A slice of a parsed document, renderable on its own by `<MarkdownDocument>`.
@@ -27,10 +27,21 @@ export type SiteDocument = MarkdownDocument<
 	SiteFrontmatter
 >;
 
-export type Project = ProjectFacts &
-	ProjectAttrs & { blurb: Fragment; detail: Fragment };
-export type Topic = TopicFacts & TopicAttrs & { gloss: Fragment };
-export type Person = PersonFacts & PersonAttrs & { note: Fragment };
+export type Project = Omit<ProjectAttrs, "stack"> & {
+	stack: string[];
+	blurb: Fragment;
+	detail: Fragment;
+};
+
+export type Topic = Omit<TopicAttrs, "projects"> & {
+	/** ::project ids this topic cross-lights, and vice versa. */
+	projects: string[];
+	gloss: Fragment;
+};
+
+export type PersonLink = { label: string; href: string };
+
+export type Person = PersonAttrs & { note: Fragment; links: PersonLink[] };
 
 export type SiteContent = {
 	frontmatter: SiteFrontmatter;
@@ -55,82 +66,79 @@ function attrsOf<T>(node: ElementNode, doc: SiteDocument): T {
 	) as T;
 }
 
+/** A single paragraph unwraps to its inline children, so prose can sit inside
+ *  the `<button>` rows without nesting a block element in phrasing content. */
+const inline = (nodes: Node[]): Fragment =>
+	nodes.length === 1 && isElement(nodes[0]) && nodes[0][0] === "p"
+		? { nodes: children(nodes[0]) }
+		: { nodes };
+
 /**
- * Joins the document's directives to the typed facts in `data.ts`, by id.
- *
- * Throws on any drift — an id present in one and absent from the other is a
- * content bug that must fail the build (the prerender runs this) rather than
- * render a half-empty section. Order comes from `data.ts`, so all locales
- * list in the same order regardless of how the markdown is arranged.
+ * Shapes a parsed `site.<locale>.md` into what the sections render, in
+ * document order. The Vite plugin has already validated attributes and
+ * cross-locale parity; the checks here are the ones that need the joined
+ * view — a topic naming a project that does not exist fails the build,
+ * because the prerender runs this.
  */
 export function buildContent(doc: SiteDocument): SiteContent {
 	const preamble: ElementNode[] = [];
-	const byTag = new Map<string, Map<string, ElementNode>>();
+	const projects: Project[] = [];
+	const topics: Topic[] = [];
+	const people: Person[] = [];
 
 	for (const node of doc.nodes) {
 		if (!isElement(node)) continue;
-		if (node[0] === "project" || node[0] === "topic" || node[0] === "person") {
-			const { id } = attrsOf<{ id: string }>(node, doc);
-			const ofTag = byTag.get(node[0]) ?? new Map<string, ElementNode>();
-			byTag.set(node[0], ofTag);
-			ofTag.set(id, node);
-		} else {
-			preamble.push(node);
+		switch (node[0]) {
+			case "project": {
+				const { stack, year, ...attrs } = attrsOf<ProjectAttrs>(node, doc);
+				const [blurb, ...detail] = children(node);
+				projects.push({
+					...attrs,
+					// The parser hands every attribute over as a string.
+					year: Number(year),
+					stack: splitList(stack),
+					blurb: inline(blurb ? [blurb] : []),
+					detail: { nodes: detail },
+				});
+				break;
+			}
+			case "topic": {
+				const { projects: related, ...attrs } = attrsOf<TopicAttrs>(node, doc);
+				topics.push({
+					...attrs,
+					projects: splitList(related),
+					gloss: inline(children(node)),
+				});
+				break;
+			}
+			case "person": {
+				const attrs = attrsOf<PersonAttrs>(node, doc);
+				people.push({ ...attrs, ...splitNote(children(node)) });
+				break;
+			}
+			default:
+				preamble.push(node);
 		}
 	}
 
-	const pick = (tag: string, id: string): ElementNode => {
-		const node = byTag.get(tag)?.get(id);
-		if (!node) {
-			throw new Error(
-				`site.${doc.frontmatter.locale}.md has no ::${tag}{#${id}} — data.ts expects one`,
-			);
+	const known = new Set(projects.map((project) => project.id));
+	for (const topic of topics) {
+		for (const id of topic.projects) {
+			if (!known.has(id)) {
+				throw new Error(
+					`site.${doc.frontmatter.locale}.md: topic #${topic.id} names unknown project "${id}"`,
+				);
+			}
 		}
-		byTag.get(tag)?.delete(id);
-		return node;
-	};
+	}
 
-	const content: SiteContent = {
+	return {
 		frontmatter: doc.frontmatter,
 		intro: splitIntro(preamble),
-		projects: PROJECTS.map((facts) => {
-			const node = pick("project", facts.id);
-			const [blurb, ...detail] = children(node);
-			return {
-				...facts,
-				...attrsOf<ProjectAttrs>(node, doc),
-				blurb: { nodes: blurb ? [blurb] : [] },
-				detail: { nodes: detail },
-			};
-		}),
-		topics: TOPICS.map((facts) => {
-			const node = pick("topic", facts.id);
-			return {
-				...facts,
-				...attrsOf<TopicAttrs>(node, doc),
-				gloss: { nodes: children(node) },
-			};
-		}),
-		people: PEOPLE.map((facts) => {
-			const node = pick("person", facts.id);
-			return {
-				...facts,
-				...attrsOf<PersonAttrs>(node, doc),
-				note: { nodes: children(node) },
-			};
-		}),
+		projects,
+		topics,
+		people,
 	};
-
-	const leftover = [...byTag.entries()]
-		.flatMap(([tag, ofTag]) => [...ofTag.keys()].map((id) => `${tag}#${id}`))
-		.join(", ");
-	if (leftover) {
-		throw new Error(
-			`site.${doc.frontmatter.locale}.md has entries data.ts does not: ${leftover}`,
-		);
-	}
-
-	return content;
 }
 
 /** Bio runs to the blockquote, the lead-in follows it. */
@@ -141,7 +149,34 @@ function splitIntro(preamble: ElementNode[]): SiteContent["intro"] {
 	}
 	return {
 		bio: { nodes: preamble.slice(0, at) },
-		quote: { nodes: children(preamble[at]) },
+		quote: inline(children(preamble[at])),
 		lead: { nodes: preamble.slice(at + 1) },
 	};
+}
+
+/**
+ * A person's body is the note, except a final paragraph made only of links —
+ * that one is the card's link list, kept as data so the layout can stack it
+ * under the name rather than leave it inside the prose.
+ */
+function splitNote(nodes: Node[]): { note: Fragment; links: PersonLink[] } {
+	const last = nodes.at(-1);
+	if (last && isElement(last) && last[0] === "p") {
+		const parts = children(last).filter(
+			(child) => !(typeof child === "string" && child.trim() === ""),
+		);
+		if (
+			parts.length > 0 &&
+			parts.every((child) => isElement(child) && child[0] === "a")
+		) {
+			return {
+				note: { nodes: nodes.slice(0, -1) },
+				links: (parts as ElementNode[]).map((anchor) => ({
+					label: children(anchor).join(""),
+					href: String(anchor[1].href ?? "#"),
+				})),
+			};
+		}
+	}
+	return { note: { nodes }, links: [] };
 }

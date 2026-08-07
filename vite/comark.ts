@@ -2,7 +2,7 @@ import type { ElementNode, MarkdownDocument, Node } from "comark";
 import { createMarkdownParser } from "comark";
 import { resolveAttributes } from "comark/utils";
 import type { Plugin } from "vite";
-import { FRONTMATTER_KEYS, SPEC } from "../src/content/schema.ts";
+import { frontmatterSchema, SPEC } from "../src/content/schema.ts";
 
 /**
  * Tags the parser is expected to emit for plain markdown. Anything outside
@@ -55,7 +55,7 @@ const children = (node: ElementNode): Node[] => node.slice(2) as Node[];
  */
 export function comark(): Plugin {
 	const parse = createMarkdownParser({ linkify: false });
-	const identifiers = new Map<string, Set<string>>();
+	const identifiers = new Map<string, Map<string, string>>();
 
 	return {
 		name: "comark",
@@ -82,27 +82,34 @@ export function comark(): Plugin {
 
 		/**
 		 * The locales are parallel documents, and markdown gives no diff-shaped
-		 * view of that — so the ids are compared across locales instead: a project
-		 * present in one language and absent from another fails the build. This is
-		 * what lets `site.de.md` start as a copy of the English and never silently
-		 * drift structurally.
+		 * view of that — so entries are compared across locales instead: a project
+		 * present in one language and absent from another fails the build, and so
+		 * does a locale-invariant attribute (a year, an href, a stack) that was
+		 * corrected in one file and left stale in another. This is what lets
+		 * `site.de.md` start as a copy of the English and never silently drift.
 		 */
 		buildEnd() {
 			const files = [...identifiers.keys()].sort();
 			if (files.length < 2) return;
 
 			const [reference, ...others] = files;
-			const expected = identifiers.get(reference) as Set<string>;
+			const expected = identifiers.get(reference) as Map<string, string>;
 
 			for (const file of others) {
-				const actual = identifiers.get(file) as Set<string>;
-				const missing = [...expected].filter((key) => !actual.has(key));
-				const extra = [...actual].filter((key) => !expected.has(key));
-				if (missing.length > 0 || extra.length > 0) {
+				const actual = identifiers.get(file) as Map<string, string>;
+				const missing = [...expected.keys()].filter((key) => !actual.has(key));
+				const extra = [...actual.keys()].filter((key) => !expected.has(key));
+				const drifted = [...expected.keys()].filter(
+					(key) => actual.has(key) && actual.get(key) !== expected.get(key),
+				);
+				if (missing.length > 0 || extra.length > 0 || drifted.length > 0) {
 					this.error(
 						`${file} does not match ${reference}:` +
 							(missing.length > 0 ? `\n  missing: ${missing.join(", ")}` : "") +
-							(extra.length > 0 ? `\n  unexpected: ${extra.join(", ")}` : ""),
+							(extra.length > 0 ? `\n  unexpected: ${extra.join(", ")}` : "") +
+							(drifted.length > 0
+								? `\n  invariant attributes differ on: ${drifted.join(", ")}`
+								: ""),
 					);
 				}
 			}
@@ -110,12 +117,27 @@ export function comark(): Plugin {
 	};
 }
 
-function collectIds(document: MarkdownDocument): Set<string> {
-	const ids = new Set<string>();
+/** id → serialized invariant attributes, e.g. "project#vox" → year/href/stack. */
+function collectIds(document: MarkdownDocument): Map<string, string> {
+	const ids = new Map<string, string>();
 	walk(document.nodes, (node) => {
 		if (!(node[0] in SPEC)) return;
-		const id = node[1].id;
-		if (typeof id === "string") ids.add(`${node[0]}#${id}`);
+		const spec = SPEC[node[0] as keyof typeof SPEC];
+		const attrs = resolveAttributes(
+			node[1],
+			{
+				frontmatter: document.frontmatter,
+				meta: document.meta,
+				data: {},
+				props: {},
+			},
+			{ parseJson: true },
+		);
+		if (typeof attrs.id !== "string") return;
+		ids.set(
+			`${node[0]}#${attrs.id}`,
+			JSON.stringify(spec.invariant.map((key) => attrs[key] ?? null)),
+		);
 	});
 	return ids;
 }
@@ -129,9 +151,12 @@ function validate(document: MarkdownDocument): string[] {
 		props: {},
 	};
 
-	for (const key of FRONTMATTER_KEYS) {
-		if (typeof document.frontmatter[key] !== "string") {
-			issues.push(`frontmatter is missing "${key}"`);
+	const front = frontmatterSchema.safeParse(document.frontmatter);
+	if (!front.success) {
+		for (const issue of front.error.issues) {
+			issues.push(
+				`frontmatter ${issue.path.join(".") || "(root)"}: ${issue.message}`,
+			);
 		}
 	}
 
@@ -145,17 +170,16 @@ function validate(document: MarkdownDocument): string[] {
 			return;
 		}
 
-		const spec = SPEC[tag as keyof typeof SPEC];
 		const attrs = resolveAttributes(node[1], renderData, { parseJson: true });
 		const where = `<${tag}${typeof attrs.id === "string" ? ` #${attrs.id}` : ""}>`;
 
-		for (const key of spec.required) {
-			if (attrs[key] === undefined) issues.push(`${where} is missing ${key}`);
-		}
-
-		const known = new Set<string>([...spec.required, ...spec.optional]);
-		for (const key of Object.keys(attrs)) {
-			if (!known.has(key)) issues.push(`${where} has unknown attribute ${key}`);
+		const result = SPEC[tag as keyof typeof SPEC].attrs.safeParse(attrs);
+		if (!result.success) {
+			for (const issue of result.error.issues) {
+				issues.push(
+					`${where} ${issue.path.join(".") || "(attrs)"}: ${issue.message}`,
+				);
+			}
 		}
 	});
 

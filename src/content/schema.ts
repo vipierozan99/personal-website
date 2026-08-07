@@ -1,60 +1,83 @@
+import { z } from "zod";
+
 /**
- * The contract between `site.*.md` and the components that render it.
+ * The contract between `site.*.md` and the components that render it,
+ * enforced by the Vite plugin at build time — a missing or misspelled
+ * attribute fails the build rather than rendering as blank (`strictObject`
+ * is what rejects the misspellings). `invariant` names the attributes that
+ * must be byte-identical in every locale, so a fact (a year, an href, a
+ * stack) corrected in one language cannot silently stay stale in another.
  *
- * Markdown attributes arrive from the parser as `Record<string, unknown>`, so
- * these types are not enforced at the authoring boundary — `SPEC` below is
- * what actually checks a document, at build time, in the Vite plugin.
- *
- * The split rule: display text that a translator touches lives in the `.md`
- * (titles, metas, link labels, all prose); facts that are the same in every
- * language live in `src/content/data.ts` (years, hrefs, stacks, mappings).
+ * Build-time only: everything here is imported by `vite/comark.ts`, and only
+ * *types* flow into `model.ts` — zod never enters the client bundle.
  */
 
-export type SiteFrontmatter = {
-	locale: string;
+export const frontmatterSchema = z.strictObject({
+	locale: z.string().min(1),
 	/** Header tagline, e.g. "Technical lead · Berlin". */
-	role: string;
+	role: z.string().min(1),
 	/** Italic line under the h1. */
-	subtitle: string;
+	subtitle: z.string().min(1),
 	/** Sidebar location note, first line. */
-	location: string;
+	location: z.string().min(1),
 	/** Sidebar location note, second line. */
-	before: string;
-};
+	before: z.string().min(1),
+	person: z.strictObject({
+		name: z.string().min(1),
+		email: z.string().email(),
+		gitlab: z.strictObject({ label: z.string().min(1), href: z.url() }),
+		paper: z.url(),
+	}),
+});
 
-export const FRONTMATTER_KEYS = [
-	"locale",
-	"role",
-	"subtitle",
-	"location",
-	"before",
-] as const satisfies readonly (keyof SiteFrontmatter)[];
-
-/** `::project{#id title= meta= link=}` — blurb paragraph, then detail prose. */
-export type ProjectAttrs = {
-	id: string;
-	title: string;
-	meta: string;
-	/** The expanded row's link label, e.g. "Read the paper ↗". */
-	link: string;
-};
-
-/** `::topic{#id label=}` — body is the one-paragraph gloss. */
-export type TopicAttrs = { id: string; label: string };
-
-/** `::person{#id name= subject=}` — body is the note. */
-export type PersonAttrs = { id: string; name: string; subject: string };
+export type SiteFrontmatter = z.infer<typeof frontmatterSchema>;
 
 /**
- * What the build-time validator checks, per component tag. Anything outside
- * `required` and `optional` is rejected, so a misspelled attribute fails the
- * build rather than rendering as blank.
+ * `::project{#id title= meta= link= year= href= stack=}` — first paragraph is
+ * the collapsed row's blurb, the rest is the expanded detail. `stack` is
+ * "·"-separated chips.
  */
+const projectSchema = z.strictObject({
+	id: z.string().min(1),
+	title: z.string().min(1),
+	meta: z.string().min(1),
+	/** The expanded row's link label, e.g. "Read the paper ↗". */
+	link: z.string().min(1),
+	// Attribute values arrive as strings; coerce rather than reject "2024".
+	year: z.coerce.number().int(),
+	href: z.string().min(1),
+	stack: z.string().min(1),
+});
+
+/**
+ * `::topic{#id label= projects=}` — body is the one-paragraph gloss.
+ * `projects` names the ::project ids this topic cross-lights, "·"-separated.
+ */
+const topicSchema = z.strictObject({
+	id: z.string().min(1),
+	label: z.string().min(1),
+	projects: z.string().optional(),
+});
+
+/**
+ * `::person{#id name= subject=}` — body is the note; a final paragraph made
+ * only of links becomes the card's link list.
+ */
+const personSchema = z.strictObject({
+	id: z.string().min(1),
+	name: z.string().min(1),
+	subject: z.string().min(1),
+});
+
+export type ProjectAttrs = z.infer<typeof projectSchema>;
+export type TopicAttrs = z.infer<typeof topicSchema>;
+export type PersonAttrs = z.infer<typeof personSchema>;
+
 export const SPEC = {
-	project: { required: ["id", "title", "meta", "link"], optional: [] },
-	topic: { required: ["id", "label"], optional: [] },
-	person: { required: ["id", "name", "subject"], optional: [] },
+	project: { attrs: projectSchema, invariant: ["year", "href", "stack"] },
+	topic: { attrs: topicSchema, invariant: ["projects"] },
+	person: { attrs: personSchema, invariant: [] },
 } as const satisfies Record<
 	string,
-	{ required: readonly string[]; optional: readonly string[] }
+	{ attrs: z.ZodType; invariant: readonly string[] }
 >;

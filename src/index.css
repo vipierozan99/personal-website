@@ -246,13 +246,56 @@
 	animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body {
-	@apply bg-paper text-ink font-sans;
+/*
+ * In @layer base so utility classes still win: header links are text-mut, row
+ * links inherit — only unclassed prose links fall through to the accent.
+ */
+@layer base {
+	body {
+		@apply bg-paper font-sans text-ink;
+	}
+
+	a {
+		@apply text-accent;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
 }
 
-a {
-	@apply text-accent;
+/*
+ * Body prose obeys the Reading controls: the variables come off <html>'s
+ * data attributes (restored pre-paint by the inline script in index.html).
+ */
+@utility prose-body {
+	font-family: var(--reader-font);
+	font-size: var(--reader-size);
+	line-height: 1.66;
+
+	& p + p {
+		margin-top: 0.8em;
+	}
 }
-a:hover {
-	text-decoration: underline;
+
+/*
+ * Active state for the Reading segmented controls. Selection lives in the
+ * same <html data-*> attributes the prose variables read, so the pills light
+ * up correctly on first paint with no React state — defaults are the
+ * attribute-less selectors.
+ */
+[data-reader-option] {
+	background: transparent;
+	color: var(--accent);
+}
+html:not([data-measure]) [data-reader-option="measure-68"],
+html[data-measure="58"] [data-reader-option="measure-58"],
+html[data-measure="80"] [data-reader-option="measure-80"],
+html:not([data-size]) [data-reader-option="size-18"],
+html[data-size="16"] [data-reader-option="size-16"],
+html[data-size="21"] [data-reader-option="size-21"],
+html:not([data-face]) [data-reader-option="face-serif"],
+html[data-face="sans"] [data-reader-option="face-sans"],
+html[data-face="mono"] [data-reader-option="face-mono"] {
+	background: var(--accent);
+	color: var(--on-accent);
 }
