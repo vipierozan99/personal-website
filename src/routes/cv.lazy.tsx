@@ -9,6 +9,7 @@ import { CvContext, type CvRenderContext } from "../components/cv/context";
 import { LoadingOverlay } from "../components/cv/LoadingOverlay";
 import { PAGINATION } from "../components/cv/pagination.generated";
 import { Sheet, SheetFooter } from "../components/cv/Sheet";
+import { applySheetViewport } from "../components/cv/viewport";
 import { Header } from "../components/Header";
 import type { CvDocument } from "../content/cv-model";
 import { cvContent } from "../content/load";
@@ -27,6 +28,11 @@ function CvPage() {
 	const render = useMemo<CvRenderContext>(() => ({ t, now }), [t, now]);
 
 	const blocks = useMemo(() => (doc ? buildBlocks(doc) : []), [doc]);
+
+	// Sized on mount for SPA navigation; direct loads were already sized by
+	// the inline script prerender.js injects. Cleanup restores the responsive
+	// viewport for the rest of the site.
+	useEffect(() => applySheetViewport(), []);
 
 	return (
 		<CvContext.Provider value={render}>

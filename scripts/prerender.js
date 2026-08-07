@@ -14,9 +14,36 @@ const HEAD_END = "</head>";
 /** The language the shipped pages hydrate against; must match entry-server. */
 const LOCALE = "en";
 
+/**
+ * Sizes narrow devices' viewport to the 21cm sheet before first paint —
+ * the pre-hydration copy of src/components/cv/viewport.ts, injected only
+ * into /cv/index.html. Keep the two in step.
+ */
+const VIEWPORT_SCRIPT = `  <script>
+    (() => {
+      const WIDTH = ${Math.ceil(21 * (96 / 2.54) + 2 * 16) + 2};
+      const meta = document.querySelector('meta[name="viewport"]');
+      const root = document.documentElement;
+      const orientation = window.matchMedia("(orientation: portrait)");
+      const apply = () => {
+        const s = window.screen;
+        const device = orientation.matches ? Math.min(s.width, s.height) : Math.max(s.width, s.height);
+        if (device >= WIDTH) {
+          meta.setAttribute("content", "width=device-width, initial-scale=1.0");
+          root.style.removeProperty("--page-scale");
+          return;
+        }
+        meta.setAttribute("content", "width=" + WIDTH);
+        root.style.setProperty("--page-scale", String(WIDTH / device));
+      };
+      apply();
+      orientation.addEventListener("change", apply);
+    })();
+  </script>`;
+
 const ROUTES = [
 	{ path: "/", file: `${OUT}/index.html` },
-	{ path: "/cv", file: `${OUT}/cv/index.html` },
+	{ path: "/cv", file: `${OUT}/cv/index.html`, headExtra: VIEWPORT_SCRIPT },
 ];
 
 const template = readFileSync(`${OUT}/index.html`, "utf8");
@@ -49,11 +76,13 @@ for (const route of ROUTES) {
 	// Replacements are functions throughout: with a string, `$&`, `$$`, "$`" and
 	// `$'` inside the rendered markup would be read as substitution patterns
 	// rather than copied through.
+	const head = [
+		`  <link rel="modulepreload" crossorigin href="/${chunk}">`,
+		...(route.headExtra ? [route.headExtra] : []),
+	].join("\n");
+
 	const html = template
-		.replace(
-			HEAD_END,
-			`  <link rel="modulepreload" crossorigin href="/${chunk}">\n${HEAD_END}`,
-		)
+		.replace(HEAD_END, `${head}\n${HEAD_END}`)
 		.replace(MOUNT, () => `<div id="root">${markup}</div>`);
 
 	mkdirSync(dirname(route.file), { recursive: true });

@@ -9,30 +9,40 @@ import { readFileSync, writeFileSync } from "node:fs";
  * config file would go stale the moment the script it describes is edited —
  * silently, taking the theme restoration down with it.
  */
-const DOCUMENT = "dist/index.html";
 const HEADERS = "dist/_headers";
 
-const html = readFileSync(DOCUMENT, "utf8");
-
 /**
- * The theme/reader restoration script and the JSON-LD block. The linked-data
- * block is inert and browsers differ on whether the policy even applies to it,
- * so it is hashed too.
+ * Every prerendered page and the inline scripts it is expected to carry: the
+ * theme/reader restoration script and the JSON-LD block on both, plus the
+ * sheet-viewport script on the CV. The counts are asserted so a new inline
+ * script cannot ship unhashed — silently blocked by the very policy below.
  */
-const inline = [
-	...html.matchAll(/<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/g),
-].map((match) => match[1]);
+const DOCUMENTS = [
+	{ file: "dist/index.html", expected: 2 },
+	{ file: "dist/cv/index.html", expected: 3 },
+];
 
-if (inline.length !== 2) {
-	throw new Error(
-		`${DOCUMENT} has ${inline.length} inline scripts, expected the theme script and the JSON-LD block — has the head changed?`,
-	);
-}
+const hashes = [
+	...new Set(
+		DOCUMENTS.flatMap(({ file, expected }) => {
+			const html = readFileSync(file, "utf8");
+			const inline = [
+				...html.matchAll(/<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/g),
+			].map((match) => match[1]);
 
-const hashes = inline.map(
-	(source) =>
-		`'sha256-${createHash("sha256").update(source, "utf8").digest("base64")}'`,
-);
+			if (inline.length !== expected) {
+				throw new Error(
+					`${file} has ${inline.length} inline scripts, expected ${expected} — has the head changed?`,
+				);
+			}
+
+			return inline.map(
+				(source) =>
+					`'sha256-${createHash("sha256").update(source, "utf8").digest("base64")}'`,
+			);
+		}),
+	),
+];
 
 const csp = [
 	"default-src 'self'",
