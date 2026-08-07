@@ -17,12 +17,6 @@ export type ReaderKey = keyof typeof READER;
 export type ReaderValue<K extends ReaderKey> =
 	(typeof READER)[K]["options"][number];
 
-export function readerValue<K extends ReaderKey>(key: K): ReaderValue<K> {
-	const raw = document.documentElement.dataset[key];
-	const found = READER[key].options.find((option) => String(option) === raw);
-	return (found ?? READER[key].fallback) as ReaderValue<K>;
-}
-
 export function setReaderPref<K extends ReaderKey>(
 	key: K,
 	value: ReaderValue<K>,

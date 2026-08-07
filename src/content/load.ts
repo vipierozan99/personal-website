@@ -21,7 +21,7 @@ export const LOCALES = Object.keys(content)
 	.map((key) => key.slice(PREFIX.length, -SUFFIX.length))
 	.sort();
 
-export function isLocale(value: string): boolean {
+function isLocale(value: string): boolean {
 	return path(value) in content;
 }
 

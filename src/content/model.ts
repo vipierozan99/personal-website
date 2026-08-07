@@ -33,15 +33,15 @@ export type Project = Omit<ProjectAttrs, "stack"> & {
 	detail: Fragment;
 };
 
-export type Topic = Omit<TopicAttrs, "projects"> & {
+type Topic = Omit<TopicAttrs, "projects"> & {
 	/** ::project ids this topic cross-lights, and vice versa. */
 	projects: string[];
 	gloss: Fragment;
 };
 
-export type PersonLink = { label: string; href: string };
+type PersonLink = { label: string; href: string };
 
-export type Person = PersonAttrs & { note: Fragment; links: PersonLink[] };
+type Person = PersonAttrs & { note: Fragment; links: PersonLink[] };
 
 export type SiteContent = {
 	frontmatter: SiteFrontmatter;
