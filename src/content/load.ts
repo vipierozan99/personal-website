@@ -34,13 +34,20 @@ function isLocale(value: string): boolean {
  */
 const loaded = new Map<string, SiteContent>();
 
+/** Loads already under way, so concurrent callers share one build — the
+ *  result cache alone cannot dedupe them, it is only written after the await. */
+const inflight = new Map<string, Promise<SiteContent>>();
+
 export function cachedContent(locale: string): SiteContent | undefined {
 	return loaded.get(locale);
 }
 
-export async function loadContent(locale: string): Promise<SiteContent> {
+export function loadContent(locale: string): Promise<SiteContent> {
 	const hit = loaded.get(locale);
-	if (hit) return hit;
+	if (hit) return Promise.resolve(hit);
+
+	const pending = inflight.get(locale);
+	if (pending) return pending;
 
 	const load = content[path(locale)];
 	if (!load) {
@@ -53,14 +60,22 @@ export async function loadContent(locale: string): Promise<SiteContent> {
 			);
 			return loadContent(DEFAULT_LOCALE);
 		}
-		throw new Error(
-			`no content for "${DEFAULT_LOCALE}" — known locales: ${LOCALES.join(", ")}`,
+		return Promise.reject(
+			new Error(
+				`no content for "${DEFAULT_LOCALE}" — known locales: ${LOCALES.join(", ")}`,
+			),
 		);
 	}
 
-	const built = buildContent((await load()) as SiteDocument);
-	loaded.set(locale, built);
-	return built;
+	const promise = load()
+		.then((document) => {
+			const built = buildContent(document as SiteDocument);
+			loaded.set(locale, built);
+			return built;
+		})
+		.finally(() => inflight.delete(locale));
+	inflight.set(locale, promise);
+	return promise;
 }
 
 /**
