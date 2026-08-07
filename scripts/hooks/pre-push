@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Two build artifacts cannot be produced by the deploy, because producing them
+# needs a browser: where the CV's sheets break, and the printed PDFs. They are
+# committed instead, which makes them the one kind of file that can be wrong
+# without anything failing — a stale pagination ships a document that
+# rearranges itself in front of the reader, and a stale PDF is a CV that no
+# longer exists.
+#
+# So they are rebuilt here, against what is about to be pushed, and the push
+# is refused if either moved. Nothing is committed on your behalf.
+#
+# Installed by `pnpm hooks`; a clone has no hooks until that is run.
+set -e
+
+ARTIFACTS="src/components/cv/pagination.generated.ts public/*.pdf"
+
+pnpm prepress
+
+# shellcheck disable=SC2086 # the pathspecs are meant to be split and globbed by git
+CHANGED=$(git status --porcelain -- $ARTIFACTS)
+
+if [ -n "$CHANGED" ]; then
+	echo
+	echo "pre-push: the prepress artifacts were out of date and have been regenerated:"
+	echo "$CHANGED" | sed 's/^/  /'
+	echo
+	echo "review them, commit them, and push again."
+	exit 1
+fi

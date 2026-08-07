@@ -119,8 +119,16 @@
  * ordering flips. `band` and `on-accent` mix toward black instead of ink:
  * the desk behind the sheet darkens on both themes, and text on the accent
  * pill stays dark under a light accent, which "toward ink" cannot express.
+ *
+ * Declared on `.sheet-light` as well as `:root`, and that is load-bearing: a
+ * custom property resolves the var() references inside its value at the
+ * element it is DECLARED on, then inherits the result — so a derived token
+ * declared only on :root would carry the theme's colors into the sheets no
+ * matter what the sheet scope pins its bases to. Restating the declarations
+ * inside the scope is what makes them recompute from the pinned bases.
  */
-:root {
+:root,
+.sheet-light {
 	/* Surfaces */
 	--paper-2: light-dark(
 		color-mix(in oklab, var(--paper) 98.5%, var(--ink)),
