@@ -65,6 +65,16 @@ export function comark(): Plugin {
 
 			const document = await parse(code);
 			const issues = validate(document);
+
+			// Content lives at content/<locale>/site.md; a frontmatter locale that
+			// disagrees with the directory would prerender the wrong language tag.
+			const fromPath = id.match(/\/([a-z-]+)\/site\.md$/)?.[1];
+			if (fromPath && document.frontmatter.locale !== fromPath) {
+				issues.push(
+					`frontmatter locale "${String(document.frontmatter.locale)}" does not match directory "${fromPath}"`,
+				);
+			}
+
 			if (issues.length > 0) {
 				this.error(`${id}\n  ${issues.join("\n  ")}`);
 			}
