@@ -16,48 +16,52 @@ export function Sidebar() {
 	const { person } = content.frontmatter;
 
 	return (
-		<aside className="sticky top-[78px] flex min-w-[240px] flex-[0_1_320px] flex-col gap-6 self-start">
-			<div
-				className="flex aspect-[4/5] w-full items-end justify-center border border-accent-line pb-2"
-				style={{
-					background:
-						"repeating-linear-gradient(135deg, var(--band) 0 6px, var(--paper-2) 6px 12px)",
-				}}
-			>
-				<span className="font-mono text-[9px] tracking-[0.06em] text-mut-2">
-					{t("sidebar.portrait")}
-				</span>
-			</div>
-
-			<SectionNav />
-			<div className="h-px bg-rule" />
-			<ReaderControls />
-			<div className="h-px bg-rule" />
-
-			<div className="font-mono text-[10.5px] leading-[1.75] text-mut-2">
-				{content.frontmatter.location}
-				<br />
-				{content.frontmatter.before}
-			</div>
-
-			<HintBox />
-
-			<div className="flex flex-col gap-[7px] font-mono text-[10.5px] text-ink-3">
-				<CopyEmailRow email={person.email} />
-				<a
-					href={person.gitlab.href}
-					className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
+		// The grid area spans the full main-row height; the inner wrapper is
+		// what sticks below the 54px header while the columns scroll.
+		<aside className="h-full">
+			<div className="sticky top-[78px] flex flex-col gap-6">
+				<div
+					className="flex aspect-[4/5] w-full items-end justify-center border border-accent-line pb-2"
+					style={{
+						background:
+							"repeating-linear-gradient(135deg, var(--band) 0 6px, var(--paper-2) 6px 12px)",
+					}}
 				>
-					<span>{person.gitlab.label}</span>
-					<span className="text-mut-2">↗</span>
-				</a>
-				<Link
-					to="/cv"
-					className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
-				>
-					<span>{t("elsewhere.cvLink").replace(" →", "")}</span>
-					<span className="text-mut-2">→</span>
-				</Link>
+					<span className="font-mono text-[9px] tracking-[0.06em] text-mut-2">
+						{t("sidebar.portrait")}
+					</span>
+				</div>
+
+				<SectionNav />
+				<div className="h-px bg-rule" />
+				<ReaderControls />
+				<div className="h-px bg-rule" />
+
+				<div className="font-mono text-[10.5px] leading-[1.75] text-mut-2">
+					{content.frontmatter.location}
+					<br />
+					{content.frontmatter.before}
+				</div>
+
+				<HintBox />
+
+				<div className="flex flex-col gap-[7px] font-mono text-[10.5px] text-ink-3">
+					<CopyEmailRow email={person.email} />
+					<a
+						href={person.gitlab.href}
+						className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
+					>
+						<span>{person.gitlab.label}</span>
+						<span className="text-mut-2">↗</span>
+					</a>
+					<Link
+						to="/cv"
+						className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
+					>
+						<span>{t("elsewhere.cvLink").replace(" →", "")}</span>
+						<span className="text-mut-2">→</span>
+					</Link>
+				</div>
 			</div>
 		</aside>
 	);
