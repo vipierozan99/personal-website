@@ -1,0 +1,6 @@
+# Everyone is welcome, crawlers and models included — the machine-readable
+# copy is at /llms.txt.
+User-agent: *
+Allow: /
+
+Sitemap: https://victor.pierozan.com/sitemap.xml

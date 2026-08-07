@@ -54,22 +54,12 @@
   <meta property="profile:first_name" content="Victor" />
   <meta property="profile:last_name" content="Pierozan" />
 
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Victor Elízio Pierozan",
-      "jobTitle": "Technical Lead",
-      "email": "mailto:victorpierozan@gmail.com",
-      "url": "https://victor.pierozan.com/",
-      "sameAs": ["https://gitlab.com/vipierozan99"],
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Berlin",
-        "addressCountry": "DE"
-      }
-    }
-  </script>
+  <!-- Structured data is derived from the CV document and injected here by
+       scripts/prerender.js, which throws if this marker is missing — so there
+       is no path where the page ships structured data that has drifted from
+       the content. `vite dev` has no prerender step and so no JSON-LD; use
+       `pnpm build && pnpm preview` to check rich results. -->
+  <!--ld+json-->
 </head>
 
 <body>

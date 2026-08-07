@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import { render } from "../dist-ssr/entry-server.js";
+import { artifacts, jsonLd, render } from "../dist-ssr/entry-server.js";
 
 /**
  * Renders every route into static HTML around the client build's template.
@@ -10,6 +10,7 @@ import { render } from "../dist-ssr/entry-server.js";
 const OUT = "dist";
 const MOUNT = '<div id="root"></div>';
 const HEAD_END = "</head>";
+const LD = "<!--ld+json-->";
 
 /** The language the shipped pages hydrate against; must match entry-server. */
 const LOCALE = "en";
@@ -58,6 +59,12 @@ if (!template.includes(HEAD_END)) {
 	throw new Error(`${OUT}/index.html has no ${HEAD_END} to preload from`);
 }
 
+if (!template.includes(LD)) {
+	throw new Error(
+		`${OUT}/index.html has no ${LD} to inject the structured data into — without it the pages would ship with none, silently`,
+	);
+}
+
 // Without this the browser only learns it needs the content chunk after the
 // app bundle has parsed, and the prerendered page sits unhydrated for a round
 // trip.
@@ -70,12 +77,17 @@ if (!chunk) {
 	);
 }
 
+// Rendered before the template is touched, so a failure in any generator
+// leaves the build output as vite left it rather than half-rewritten.
+const structuredData = await jsonLd();
+const files = await artifacts();
+
 for (const route of ROUTES) {
 	const markup = await render(route.path);
 
 	// Replacements are functions throughout: with a string, `$&`, `$$`, "$`" and
-	// `$'` inside the rendered markup would be read as substitution patterns
-	// rather than copied through.
+	// `$'` inside the rendered markup or the serialised JSON would be read as
+	// substitution patterns rather than copied through.
 	const head = [
 		`  <link rel="modulepreload" crossorigin href="/${chunk}">`,
 		...(route.headExtra ? [route.headExtra] : []),
@@ -83,11 +95,39 @@ for (const route of ROUTES) {
 
 	const html = template
 		.replace(HEAD_END, `${head}\n${HEAD_END}`)
+		.replace(LD, () => script(structuredData))
 		.replace(MOUNT, () => `<div id="root">${markup}</div>`);
 
 	mkdirSync(dirname(route.file), { recursive: true });
 	writeFileSync(route.file, html);
 }
 
+for (const [name, body] of Object.entries(files)) {
+	// The names come from the artifact emitters rather than from anything
+	// external, but they are interpolated into a write path, so they are
+	// checked rather than trusted.
+	if (name.includes("/") || name.includes("..") || name === "index.html") {
+		throw new Error(`artifact "${name}" must be a flat filename`);
+	}
+	writeFileSync(`${OUT}/${name}`, body);
+}
+
 // info, not log: this is build progress on purpose, not a leftover debug print.
-console.info(`prerendered ${ROUTES.map((route) => route.path).join(", ")}`);
+console.info(
+	`prerendered ${ROUTES.map((route) => route.path).join(", ")}, plus ${Object.keys(files).join(", ")}`,
+);
+
+/**
+ * The structured data as a script element, indented to sit where the marker
+ * did. `<` is escaped so no string in the content can close the element
+ * early; `\u003c` is still valid JSON and parses back to `<`.
+ */
+function script(json) {
+	const body = json
+		.trimEnd()
+		.split("\n")
+		.map((line) => `    ${line}`)
+		.join("\n");
+
+	return `<script type="application/ld+json">\n${body.replace(/</g, "\\u003c")}\n  </script>`;
+}
