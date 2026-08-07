@@ -19,7 +19,7 @@ export function Sidebar() {
 		// The grid area spans the full main-row height; the inner wrapper is
 		// what sticks below the 54px header while the columns scroll.
 		<aside className="h-full">
-			<div className="sticky top-[78px] flex flex-col gap-6">
+			<div className="sticky top-20 flex flex-col gap-6">
 				<div
 					className="flex aspect-[4/5] w-full items-end justify-center border border-accent-line pb-2"
 					style={{
@@ -27,7 +27,7 @@ export function Sidebar() {
 							"repeating-linear-gradient(135deg, var(--band) 0 6px, var(--paper-2) 6px 12px)",
 					}}
 				>
-					<span className="font-mono text-[9px] tracking-[0.06em] text-mut-2">
+					<span className="font-mono text-mut-2 text-tag tracking-wider">
 						{t("sidebar.portrait")}
 					</span>
 				</div>
@@ -37,7 +37,7 @@ export function Sidebar() {
 				<ReaderControls />
 				<div className="h-px bg-rule" />
 
-				<div className="font-mono text-[10.5px] leading-[1.75] text-mut-2">
+				<div className="font-mono text-mut-2 text-ui leading-prose">
 					{content.frontmatter.location}
 					<br />
 					{content.frontmatter.before}
@@ -45,7 +45,7 @@ export function Sidebar() {
 
 				<HintBox />
 
-				<div className="flex flex-col gap-[7px] font-mono text-[10.5px] text-ink-3">
+				<div className="flex flex-col gap-2 font-mono text-ink-3 text-ui">
 					<CopyEmailRow email={person.email} />
 					<a
 						href={person.gitlab.href}
@@ -79,19 +79,17 @@ function SectionNav() {
 	];
 
 	return (
-		<nav className="flex gap-3.5">
+		<nav className="flex gap-3">
 			<div className="w-0.5 shrink-0 bg-rule" />
-			<div className="flex flex-1 flex-col gap-[11px]">
+			<div className="flex flex-1 flex-col gap-3">
 				{sections.map((section) => (
 					<a
 						key={section.href}
 						href={section.href}
-						className="flex items-baseline gap-[9px] text-inherit hover:no-underline"
+						className="flex items-baseline gap-2 text-inherit hover:no-underline"
 					>
-						<span className="font-mono text-[9.5px] text-faint-2">
-							{section.n}
-						</span>
-						<span className="font-mono text-[11px] uppercase tracking-[0.1em] text-mut-2 hover:text-accent">
+						<span className="font-mono text-faint-2 text-tag">{section.n}</span>
+						<span className="font-mono text-mut-2 text-ui uppercase tracking-widest hover:text-accent">
 							{section.label}
 						</span>
 					</a>
@@ -152,21 +150,21 @@ function ReaderControls() {
 				aria-expanded={open}
 				className="flex cursor-pointer items-center gap-2 text-left"
 			>
-				<span className="flex-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.2em] text-accent">
+				<span className="flex-1 font-bold font-mono text-accent text-tag uppercase tracking-banner">
 					{t("reading.title")}
 				</span>
-				<span className="font-mono text-[11px] text-accent" aria-hidden>
+				<span className="font-mono text-accent text-ui" aria-hidden>
 					{open ? "−" : "+"}
 				</span>
 			</button>
 			{open && (
-				<div className="flex flex-col gap-3.5">
+				<div className="flex flex-col gap-3">
 					{groups.map((group) => (
 						<div key={group.key} className="flex flex-col gap-1.5">
-							<span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
+							<span className="font-mono text-faint text-tag uppercase tracking-tag">
 								{group.name}
 							</span>
-							<div className="flex overflow-hidden rounded-[3px] border border-accent-line">
+							<div className="flex overflow-hidden rounded-card border border-accent-line">
 								{group.options.map((option) => (
 									<button
 										key={String(option.value)}
@@ -178,7 +176,7 @@ function ReaderControls() {
 											setReaderPref(group.key, option.value as never)
 										}
 										className={clsx(
-											"flex-1 cursor-pointer border-r border-rule px-1 py-2 font-mono text-xs last:border-r-0",
+											"flex-1 cursor-pointer border-rule border-r px-1 py-2 font-mono text-xs last:border-r-0",
 											option.className,
 										)}
 									>
@@ -188,12 +186,12 @@ function ReaderControls() {
 							</div>
 						</div>
 					))}
-					<div className="font-mono text-[10px] leading-[1.65] text-faint">
+					<div className="font-mono text-faint text-label leading-prose">
 						{t("reading.kept")}{" "}
 						<button
 							type="button"
 							onClick={resetReader}
-							className="cursor-pointer font-mono text-[10px] text-accent underline"
+							className="cursor-pointer font-mono text-accent text-label underline"
 						>
 							{t("reading.reset")}
 						</button>
@@ -220,7 +218,7 @@ function HintBox() {
 	}
 
 	return (
-		<div className="border-l-2 border-accent-2 pl-3 font-mono text-[10.5px] leading-[1.7] text-accent">
+		<div className="border-accent-2 border-l-2 pl-3 font-mono text-accent text-ui leading-prose">
 			{hint}
 		</div>
 	);
@@ -234,7 +232,7 @@ function CopyEmailRow({ email }: { email: string }) {
 			type="button"
 			onClick={copy}
 			title={t("contact.copy")}
-			className="flex cursor-pointer justify-between font-mono text-[10.5px] text-ink-3 transition-colors duration-150 hover:text-accent"
+			className="flex cursor-pointer justify-between font-mono text-ink-3 text-ui transition-colors duration-150 hover:text-accent"
 		>
 			<span>{copied ? t("contact.copied") : email}</span>
 			<span className="text-mut-2" aria-hidden>

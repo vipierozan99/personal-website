@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useLanguage } from "../../lib/lang";
 import { useCopy } from "../../lib/useCopy";
 
-const rowLink = "font-mono text-[11.5px]";
+const rowLink = "font-mono text-meta";
 
 export function Elsewhere() {
 	const { content, t } = useLanguage();
@@ -12,16 +12,16 @@ export function Elsewhere() {
 	return (
 		<section
 			id="elsewhere"
-			className="flex flex-wrap items-baseline gap-x-10 gap-y-[18px] border-t border-accent-line pt-[22px]"
+			className="flex flex-wrap items-baseline gap-x-10 gap-y-4 border-accent-line border-t pt-6"
 		>
-			<span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+			<span className="font-bold font-mono text-accent text-label uppercase tracking-banner">
 				{t("elsewhere.title")}
 			</span>
 			<button
 				type="button"
 				onClick={copy}
 				title={t("contact.copy")}
-				className="cursor-pointer font-mono text-[11.5px] text-ink-3 transition-colors duration-150 hover:text-accent"
+				className="cursor-pointer font-mono text-ink-3 text-meta transition-colors duration-150 hover:text-accent"
 			>
 				{copied ? t("contact.copied") : `⧉ ${person.email}`}
 			</button>
@@ -35,7 +35,7 @@ export function Elsewhere() {
 				{t("elsewhere.cvLink")}
 			</Link>
 			<div className="flex-1" />
-			<span className="font-mono text-[10px] leading-[1.7] text-faint">
+			<span className="font-mono text-faint text-label leading-prose">
 				{t("elsewhere.colophon")}
 			</span>
 		</section>

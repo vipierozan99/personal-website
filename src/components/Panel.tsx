@@ -27,20 +27,20 @@ export function Panel({
 					ref={ref}
 					className={clsx(
 						"overscroll-contain",
-						!expanded && "max-h-[460px] overflow-y-auto",
+						!expanded && "max-h-panel overflow-y-auto",
 					)}
 				>
 					{children}
 				</div>
 				{fade && (
-					<div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-linear-to-t from-paper from-15% to-transparent" />
+					<div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-15% from-paper to-transparent" />
 				)}
 			</div>
 			{showButton && (
 				<button
 					type="button"
 					onClick={toggle}
-					className="mt-3 cursor-pointer self-start whitespace-nowrap rounded-full border border-accent-line px-[13px] py-[7px] font-mono text-[10px] uppercase tracking-[0.1em] text-accent transition-colors duration-150 hover:border-accent"
+					className="mt-3 cursor-pointer self-start whitespace-nowrap rounded-full border border-accent-line px-3 py-1.5 font-mono text-accent text-label uppercase tracking-widest transition-colors duration-150 hover:border-accent"
 				>
 					{expanded
 						? t("panel.collapse", { label })

@@ -61,6 +61,15 @@
 			"correctness": {
 				"noUnusedImports": "warn",
 				"useHookAtTopLevel": "error"
+			},
+			"nursery": {
+				// Keeps Tailwind class strings in one canonical order, so a token
+				// refactor like the type/spacing scale shows up as a clean diff.
+				"useSortedClasses": {
+					"level": "warn",
+					"fix": "safe",
+					"options": { "functions": ["clsx"] }
+				}
 			}
 		}
 	},

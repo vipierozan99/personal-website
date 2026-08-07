@@ -29,13 +29,13 @@ function Home() {
 		<div className="flex min-h-dvh flex-col">
 			<Header />
 			<HighlightProvider>
-				<div className="grid flex-1 grid-cols-1 grid-rows-[1fr_auto_auto] gap-x-14 gap-y-12 px-[clamp(18px,3vw,44px)] pt-[46px] pb-10 [grid-template-areas:'content'_'sidebar'_'footer'] md:grid-cols-[minmax(250px,300px)_1fr] md:grid-rows-[1fr_auto] md:[grid-template-areas:'sidebar_content'_'sidebar_footer']">
-					<div className="flex min-w-0 flex-wrap content-start items-start gap-[46px] [grid-area:content]">
-						<div className="flex min-w-[340px] flex-[1_1_420px] flex-col gap-[34px]">
+				<div className="grid flex-1 grid-cols-1 grid-rows-[1fr_auto_auto] gap-x-12 gap-y-12 px-gutter pt-12 pb-12 [grid-template-areas:'content'_'sidebar'_'footer'] md:grid-cols-[minmax(16rem,19rem)_1fr] md:grid-rows-[1fr_auto] md:[grid-template-areas:'sidebar_content'_'sidebar_footer']">
+					<div className="flex min-w-0 flex-wrap content-start items-start gap-12 [grid-area:content]">
+						<div className="flex min-w-85 flex-[1_1_26rem] flex-col gap-8">
 							<Intro />
 							<Projects />
 						</div>
-						<div className="flex min-w-[340px] flex-[1_1_400px] flex-col gap-[34px]">
+						<div className="flex min-w-85 flex-[1_1_25rem] flex-col gap-8">
 							<People />
 							<Topics />
 						</div>

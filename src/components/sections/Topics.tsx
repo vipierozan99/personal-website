@@ -36,13 +36,13 @@ export function Topics() {
 							onFocus={() => setHover({ kind: "topic", id: topic.id })}
 							onBlur={() => setHover(null)}
 							className={clsx(
-								"-ml-2 grid w-full cursor-pointer grid-cols-[30px_1fr] items-baseline gap-3 rounded-[2px] px-2 py-[7px] text-left transition-colors duration-150",
+								"-ml-2 grid w-full cursor-pointer grid-cols-[2rem_1fr] items-baseline gap-3 rounded-card px-2 py-1.5 text-left transition-colors duration-150",
 								hovered ? "bg-hover" : "bg-transparent",
 							)}
 						>
 							<span
 								className={clsx(
-									"font-mono text-[10px] transition-colors duration-150",
+									"font-mono text-label transition-colors duration-150",
 									hover && lit ? "text-accent-2" : "text-faint-2",
 								)}
 							>
@@ -51,14 +51,14 @@ export function Topics() {
 							<span className="flex flex-col gap-1">
 								<span
 									className={clsx(
-										"font-serif text-lg leading-[1.4] transition-colors duration-150",
+										"font-serif text-lg leading-snug transition-colors duration-150",
 										lit ? "text-ink-2" : "text-faint",
 									)}
 								>
 									{topic.label}
 								</span>
 								{glosses && (
-									<span className="max-w-[52ch] text-[13px] leading-[1.55] text-mut-2">
+									<span className="max-w-[52ch] text-blurb text-mut-2 leading-normal">
 										<InlineProse value={topic.gloss} />
 									</span>
 								)}

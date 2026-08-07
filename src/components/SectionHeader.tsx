@@ -8,8 +8,8 @@ export function SectionHeader({
 	children?: ReactNode;
 }) {
 	return (
-		<div className="mb-1.5 flex items-baseline gap-3 border-b border-accent-line pb-2.5">
-			<span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+		<div className="mb-1.5 flex items-baseline gap-3 border-accent-line border-b pb-2">
+			<span className="font-bold font-mono text-accent text-label uppercase tracking-banner">
 				{label}
 			</span>
 			<div className="flex-1" />
@@ -20,4 +20,4 @@ export function SectionHeader({
 
 /** The bare text-button style the section headers share. */
 export const headerButton =
-	"cursor-pointer font-mono text-[10px] uppercase tracking-[0.1em] text-accent";
+	"cursor-pointer font-mono text-label uppercase tracking-widest text-accent";

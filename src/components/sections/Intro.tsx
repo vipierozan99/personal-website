@@ -8,14 +8,14 @@ export function Intro() {
 	return (
 		<section
 			id="intro"
-			className="flex w-full flex-col gap-[22px]"
+			className="flex w-full flex-col gap-6"
 			style={{ maxWidth: "var(--reader-measure)" }}
 		>
-			<div className="flex flex-col gap-2.5">
-				<h1 className="font-serif text-[clamp(38px,6vw,62px)] font-normal leading-[0.95] tracking-[-0.026em] text-ink">
+			<div className="flex flex-col gap-2">
+				<h1 className="font-normal font-serif text-display text-ink leading-display tracking-display">
 					{frontmatter.person.name}
 				</h1>
-				<p className="font-serif text-[clamp(19px,2.5vw,23px)] italic leading-[1.3] text-accent">
+				<p className="font-serif text-accent text-subtitle italic leading-snug">
 					{frontmatter.subtitle}
 				</p>
 			</div>
@@ -24,8 +24,8 @@ export function Intro() {
 				<Prose value={intro.bio} />
 			</div>
 
-			<div id="care" className="border-l-[3px] border-accent py-1 pl-5">
-				<p className="m-0 font-serif text-[clamp(19px,2.5vw,21px)] leading-[1.5] text-pretty text-ink">
+			<div id="care" className="border-accent border-l-[3px] py-1 pl-5">
+				<p className="m-0 text-pretty font-serif text-ink text-quote leading-normal">
 					<InlineProse value={intro.quote} />
 				</p>
 			</div>
