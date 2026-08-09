@@ -20,8 +20,11 @@ export function Intro() {
 				<Prose value={intro.bio} />
 			</div>
 
-			<div id="care" className="border-accent border-l-[3px] py-1 pl-5">
-				<p className="m-0 text-pretty font-serif text-ink text-lede leading-normal">
+			<div
+				id="care"
+				className="border-accent border-l-[3px] bg-hover py-1 pl-5"
+			>
+				<p className="m-0 text-pretty text-ink-2 leading-normal">
 					<InlineProse value={intro.quote} />
 				</p>
 			</div>
