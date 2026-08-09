@@ -5,22 +5,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!--
-    The theme, restored before the stylesheet so the first paint is already
-    correct — a module script is deferred and would flash the light theme at
-    every dark-mode visitor. The app bundle deliberately has no copy of this
-    logic: React never renders theme-dependent markup, this attribute is the
-    whole mechanism.
-  -->
+  
+  <meta name="color-scheme" content="light dark" />
+
+
   <script>
     (() => {
-      try {
-        const d = document.documentElement;
-        let t = localStorage.theme;
-        if (t !== "dark" && t !== "light")
-          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        d.dataset.theme = t;
-      } catch { }
+      const d = document.documentElement;
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      const stored = () => {
+        try {
+          const t = localStorage.theme;
+          return t === "dark" || t === "light" ? t : null;
+        } catch {
+          return null;
+        }
+      };
+      const m = matchMedia("(prefers-color-scheme: dark)");
+      const swap = () => {
+        d.dataset.theme = stored() ?? (m.matches ? "dark" : "light");
+      };
+      const syncMeta = () => {
+        meta.content = d.dataset.theme;
+      };
+      swap();
+      syncMeta();
+      m.addEventListener("change", () => {
+        if (stored()) return;
+        if (document.startViewTransition) document.startViewTransition(swap);
+        else swap();
+      });
+      new MutationObserver(syncMeta).observe(d, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
     })();
   </script>
 
