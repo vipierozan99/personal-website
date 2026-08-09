@@ -18,26 +18,29 @@ export function People() {
 					{content.people.map((person) => (
 						<div
 							key={person.id}
-							className="flex flex-wrap items-start gap-x-6 gap-y-2 rounded-card border border-rule bg-paper-2 p-5"
+							className="flex flex-col gap-3 rounded-card border border-rule bg-paper-2 p-5"
 						>
-							<div className="flex shrink basis-45 flex-col gap-2">
+							<div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
 								<span className="font-serif text-2xl text-ink leading-heading">
 									{person.name}
+								</span>
+								<span className="text-faint" aria-hidden="true">
+									—
 								</span>
 								<span className="font-mono text-mut text-tag uppercase tracking-tag">
 									{person.subject}
 								</span>
-								<span className="flex flex-col gap-1 font-mono text-tag">
-									{person.links.map((link) => (
-										<a key={link.label} href={link.href}>
-											{link.label}
-										</a>
-									))}
-								</span>
 							</div>
-							<div className="prose-body flex-1 basis-75 text-pretty text-ink-2 [--prose-size:0.875rem]">
+							<div className="prose-body text-pretty text-ink-2 [--prose-size:0.875rem]">
 								<Prose value={person.note} />
 							</div>
+							<span className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-tag">
+								{person.links.map((link) => (
+									<a key={link.label} href={link.href}>
+										{link.label}
+									</a>
+								))}
+							</span>
 						</div>
 					))}
 				</div>
