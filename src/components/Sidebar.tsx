@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import portrait from "../../public/portrait.jpeg?url";
+import portrait from "../assets/portrait.jpeg";
 import { useHighlight } from "../lib/highlight";
 import { useLanguage } from "../lib/lang";
 import { useCopy } from "../lib/useCopy";
