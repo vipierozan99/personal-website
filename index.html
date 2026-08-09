@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!--
-    Theme and reader preferences, restored before the stylesheet so the first
-    paint is already correct — a module script is deferred and would flash the
-    light theme at every dark-mode visitor. The app bundle deliberately has no
-    copy of this logic: React never renders theme-dependent markup, these
-    attributes are the whole mechanism.
+    The theme, restored before the stylesheet so the first paint is already
+    correct — a module script is deferred and would flash the light theme at
+    every dark-mode visitor. The app bundle deliberately has no copy of this
+    logic: React never renders theme-dependent markup, this attribute is the
+    whole mechanism.
   -->
   <script>
     (() => {
@@ -20,10 +20,6 @@
         if (t !== "dark" && t !== "light")
           t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         d.dataset.theme = t;
-        const r = JSON.parse(localStorage.reader || "null") || {};
-        if (r.face === "sans" || r.face === "mono") d.dataset.face = r.face;
-        if (r.measure === 58 || r.measure === 80) d.dataset.measure = String(r.measure);
-        if (r.size === 16 || r.size === 21) d.dataset.size = String(r.size);
       } catch { }
     })();
   </script>
@@ -32,9 +28,8 @@
        waits for the stylesheet that names it. crossorigin even though they are
        same-origin: fonts fetch in CORS mode, and a preload whose mode does not
        match is a second download rather than a hit. -->
-  <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/ibm-plex-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
 
   <title>Victor Pierozan — Backend and Systems Engineer</title>
   <meta name="description"

@@ -5,10 +5,14 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
- * All three faces are served from this origin as the Latin variable subsets
+ * Both families are served from this origin as the Latin variable subsets
  * Google itself serves, byte for byte. `swap` keeps the text legible in the
  * fallback while they load. The subset stops at Latin, so marks outside it —
  * ☾, ☀, ⧉, ↗ — come from the system stack on purpose.
+ *
+ * Newsreader ships roman and italic because the page sets real italics in it;
+ * the mono is roman only, and nothing may set it in italic — there is no
+ * italic file, so the browser would synthesise a slanted fake.
  */
 @font-face {
 	font-family: "Newsreader";
@@ -28,18 +32,6 @@
 	font-weight: 200 800;
 	font-display: swap;
 	src: url("/fonts/newsreader-italic-latin.woff2") format("woff2");
-	unicode-range:
-		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-		U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-		U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-	font-family: "IBM Plex Sans";
-	font-style: normal;
-	font-weight: 100 700;
-	font-display: swap;
-	src: url("/fonts/ibm-plex-sans-latin.woff2") format("woff2");
 	unicode-range:
 		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
 		U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
@@ -202,29 +194,48 @@
 
 @theme {
 	--font-serif: "Newsreader", ui-serif, Georgia, serif;
-	--font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
 	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
 	/*
-	 * Type, by role. Four custom sizes; everything else is Tailwind's own
-	 * xs/sm/base/lg/2xl. rem throughout so a reader's font preference scales
-	 * the whole page.
+	 * Two voices, and the mono leads: it sets the body, every piece of prose
+	 * and all of the UI. The serif is kept for the things that name something —
+	 * the h1, project titles, people, topics — and for the two italic moments,
+	 * which only it can set (see the @font-face note above).
+	 *
+	 * Pairing them needs one correction no token name can carry. JetBrains
+	 * Mono's x-height is about 0.55em against Newsreader's ~0.45em, so serif
+	 * specified at the mono's nominal size reads a full step smaller than the
+	 * text beside it. Serif that sits next to running mono is therefore always
+	 * specified one step up — the header wordmark is text-lg, not text-base.
+	 *
+	 * Four custom sizes; everything else is Tailwind's own xs/sm/base/lg/2xl.
+	 * rem throughout so a reader's browser font preference scales the page.
 	 */
 	--text-tag: 0.625rem; /* 10px — ALL mono UI: tags, labels, pills, nav */
 	--text-title: 1.375rem; /* 22px — serif headings: projects, people */
 	--text-lede: clamp(1.1875rem, 2.5vw, 1.375rem); /* subtitle, pull quote */
 	--text-display: clamp(2.375rem, 6vw, 3.875rem); /* the h1 */
 
-	/* em, always — tracking must follow its own font size. */
-	--tracking-tag: 0.14em; /* uppercase micro meta */
-	--tracking-banner: 0.2em; /* section labels */
+	/*
+	 * em, always — tracking must follow its own font size. A monospace carries
+	 * its own generous sidebearings, so the uppercase-micro-label idiom needs
+	 * markedly less added tracking here than the same idiom wants in a
+	 * proportional face; the old 0.14/0.2em pair read as gappy once the mono
+	 * was carrying the whole page rather than a few captions.
+	 */
+	--tracking-tag: 0.1em; /* every uppercase micro label */
+	--tracking-banner: 0.14em; /* section banners, the loudest of them */
+	--tracking-prose: -0.011em; /* running mono, pulled together a hair */
 	--tracking-display: -0.026em; /* the h1 only */
 
 	/* Unitless, always. Everything reads as display / heading / snug labels /
-	   normal / prose — finer distinctions were noise. */
+	   normal / prose — finer distinctions were noise. Prose sits at the top of
+	   the usual 1.5–1.8 band because a monospace's uniform advance widths
+	   flatten word shapes, and the extra leading is what gives the eye the
+	   line-to-line landmarks the letterforms no longer provide. */
 	--leading-display: 0.95;
 	--leading-heading: 1.1;
-	--leading-prose: 1.66;
+	--leading-prose: 1.75;
 
 	/* One radius for every card, panel and segment; pills use rounded-full. */
 	--radius-card: 0.1875rem;
@@ -237,37 +248,6 @@
 	--spacing-gutter: clamp(1.125rem, 3vw, 2.75rem); /* page side padding */
 	--spacing-header: 3.375rem; /* 54px — header bar height */
 	--spacing-panel: 28.75rem; /* 460px — capped panel height */
-}
-
-/*
- * Reader preferences. The inline script in index.html restores the saved data-*
- * attributes before first paint, so prose renders with the reader's metrics and
- * hydration never sees different markup — the attributes live outside React.
- * Defaults need no attribute at all.
- */
-:root {
-	/* ch for the measure (it is a count of characters), rem for the sizes. */
-	--reader-measure: 68ch;
-	--reader-size: 1.125rem;
-	--reader-font: var(--font-serif);
-}
-[data-measure="58"] {
-	--reader-measure: 58ch;
-}
-[data-measure="80"] {
-	--reader-measure: 80ch;
-}
-[data-size="16"] {
-	--reader-size: 1rem;
-}
-[data-size="21"] {
-	--reader-size: 1.3125rem;
-}
-[data-face="sans"] {
-	--reader-font: var(--font-sans);
-}
-[data-face="mono"] {
-	--reader-font: var(--font-mono);
 }
 
 :root {
@@ -401,7 +381,7 @@
  */
 @layer base {
 	body {
-		@apply bg-paper font-sans text-ink;
+		@apply bg-paper font-mono text-ink;
 	}
 
 	a {
@@ -441,39 +421,18 @@
 }
 
 /*
- * Body prose obeys the Reading controls: the variables come off <html>'s
- * data attributes (restored pre-paint by the inline script in index.html).
+ * Every run of body prose on the site. One size — the browser's own, which is
+ * the reader's real preference rather than a picker's idea of it — set in the
+ * mono at the leading and negative tracking the pairing note above explains.
  */
 @utility prose-body {
-	font-family: var(--reader-font);
-	font-size: var(--reader-size);
+	font-family: var(--font-mono);
+	font-size: 1rem;
 	line-height: var(--leading-prose);
+	letter-spacing: var(--tracking-prose);
 
-	/* em: the paragraph gap should scale with the reader's chosen size. */
+	/* em, so the paragraph gap tracks the font size wherever this lands. */
 	& p + p {
-		margin-top: 0.8em;
+		margin-top: 0.9em;
 	}
-}
-
-/*
- * Active state for the Reading segmented controls. Selection lives in the
- * same <html data-*> attributes the prose variables read, so the pills light
- * up correctly on first paint with no React state — defaults are the
- * attribute-less selectors.
- */
-[data-reader-option] {
-	background: transparent;
-	color: var(--accent);
-}
-html:not([data-measure]) [data-reader-option="measure-68"],
-html[data-measure="58"] [data-reader-option="measure-58"],
-html[data-measure="80"] [data-reader-option="measure-80"],
-html:not([data-size]) [data-reader-option="size-18"],
-html[data-size="16"] [data-reader-option="size-16"],
-html[data-size="21"] [data-reader-option="size-21"],
-html:not([data-face]) [data-reader-option="face-serif"],
-html[data-face="sans"] [data-reader-option="face-sans"],
-html[data-face="mono"] [data-reader-option="face-mono"] {
-	background: var(--accent);
-	color: var(--on-accent);
 }

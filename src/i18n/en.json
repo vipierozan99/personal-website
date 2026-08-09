@@ -44,18 +44,7 @@
 		"title": "Elsewhere",
 		"paper": "IEEE paper ↗",
 		"cvLink": "Curriculum vitæ →",
-		"colophon": "Set in Newsreader, IBM Plex Sans and JetBrains Mono."
-	},
-	"reading": {
-		"title": "Reading",
-		"measure": "Measure",
-		"size": "Size",
-		"face": "Face",
-		"serif": "Serif",
-		"sans": "Sans",
-		"mono": "Mono",
-		"kept": "Kept on this device.",
-		"reset": "Reset"
+		"colophon": "Set in JetBrains Mono and Newsreader."
 	},
 	"sidebar": {
 		"portrait": "portrait · drop yours here",

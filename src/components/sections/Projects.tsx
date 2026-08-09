@@ -127,7 +127,7 @@ function Row({
 			{open && (
 				<div className="pr-1.5 pb-4 pl-12">
 					<div className="flex flex-col gap-3 border-accent-soft border-l-2 pl-4">
-						<div className="prose-body max-w-[56ch] text-ink-2">
+						<div className="prose-body text-ink-2">
 							<Prose value={project.detail} />
 						</div>
 						<span className="flex flex-wrap gap-1">

@@ -35,7 +35,7 @@ export function People() {
 									))}
 								</span>
 							</div>
-							<div className="max-w-[52ch] flex-1 basis-75 text-pretty font-serif text-base text-ink-2 leading-prose">
+							<div className="prose-body flex-1 basis-75 text-pretty text-ink-2">
 								<Prose value={person.note} />
 							</div>
 						</div>

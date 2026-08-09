@@ -78,6 +78,16 @@ export function SheetFooter({
 	);
 }
 
+/*
+ * Print metrics, pinned rather than tokenised — like the px sizes throughout
+ * these sheets. The section headings once read the site's --tracking-banner,
+ * which meant retuning that token for the screen silently re-set the printed
+ * document and moved the committed PDF bytes. Anything the sheets render is
+ * part of a paginated artifact: it states its own values.
+ */
+const SHEET_HEADING =
+	"font-bold font-mono text-[10px] text-accent uppercase tracking-[0.2em]";
+
 /** The label-and-hairline that opens a section. */
 export function SectionRule({
 	label,
@@ -90,7 +100,7 @@ export function SectionRule({
 }) {
 	return (
 		<div className={clsx("flex items-baseline gap-[10px]", className)}>
-			<h2 className="font-bold font-mono text-[10px] text-accent uppercase tracking-banner">
+			<h2 className={SHEET_HEADING}>
 				{label}
 				{suffix ? <span className="text-mut-2"> {suffix}</span> : null}
 			</h2>
@@ -118,7 +128,7 @@ export function ContinuationRule({
 			{/* Fixed height so the labelled and bare variants cost the page the same. */}
 			<div className="flex h-[13px] items-baseline gap-[10px]">
 				{label ? (
-					<h2 className="font-bold font-mono text-[10px] text-accent uppercase tracking-banner">
+					<h2 className={SHEET_HEADING}>
 						{label}
 						{suffix ? <span className="text-mut-2"> {suffix}</span> : null}
 					</h2>

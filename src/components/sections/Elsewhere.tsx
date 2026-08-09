@@ -14,7 +14,7 @@ export function Elsewhere() {
 			id="elsewhere"
 			className="flex flex-wrap items-baseline gap-x-10 gap-y-4 border-accent-line border-t pt-6"
 		>
-			<span className="font-bold font-mono text-accent text-tag uppercase tracking-banner">
+			<span className="font-mono font-semibold text-accent text-tag uppercase tracking-banner">
 				{t("elsewhere.title")}
 			</span>
 			<button

@@ -9,7 +9,7 @@ export function SectionHeader({
 }) {
 	return (
 		<div className="mb-1.5 flex items-baseline gap-3 border-accent-line border-b pb-2">
-			<span className="font-bold font-mono text-accent text-tag uppercase tracking-banner">
+			<span className="font-mono font-semibold text-accent text-tag uppercase tracking-banner">
 				{label}
 			</span>
 			<div className="flex-1" />
@@ -20,4 +20,4 @@ export function SectionHeader({
 
 /** The bare text-button style the section headers share. */
 export const headerButton =
-	"cursor-pointer font-mono text-tag uppercase tracking-widest text-accent";
+	"cursor-pointer font-mono text-tag uppercase tracking-tag text-accent";

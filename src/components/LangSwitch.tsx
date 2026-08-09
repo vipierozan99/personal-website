@@ -45,7 +45,7 @@ export function LangSwitch() {
 						onFocus={() => prefetch(code)}
 						onTouchStart={() => prefetch(code)}
 						className={clsx(
-							"cursor-pointer rounded-full border px-2 py-1 font-mono text-tag tracking-widest transition-colors duration-150",
+							"cursor-pointer rounded-full border px-2 py-1 font-mono text-tag tracking-tag transition-colors duration-150",
 							current
 								? "border-accent bg-accent text-on-accent"
 								: "border-accent-line bg-transparent text-accent hover:border-accent",

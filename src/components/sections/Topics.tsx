@@ -58,7 +58,7 @@ export function Topics() {
 									{topic.label}
 								</span>
 								{glosses && (
-									<span className="max-w-[52ch] text-mut-2 text-sm leading-normal">
+									<span className="text-mut-2 text-sm leading-normal">
 										<InlineProse value={topic.gloss} />
 									</span>
 								)}

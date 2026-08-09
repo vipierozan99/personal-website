@@ -1,14 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import clsx from "clsx";
-import { useState } from "react";
 import { useHighlight } from "../lib/highlight";
 import { useLanguage } from "../lib/lang";
-import {
-	READER,
-	type ReaderKey,
-	resetReader,
-	setReaderPref,
-} from "../lib/reader";
 import { useCopy } from "../lib/useCopy";
 
 export function Sidebar() {
@@ -27,14 +19,12 @@ export function Sidebar() {
 							"repeating-linear-gradient(135deg, var(--band) 0 6px, var(--paper-2) 6px 12px)",
 					}}
 				>
-					<span className="font-mono text-mut-2 text-tag tracking-wider">
+					<span className="font-mono text-mut-2 text-tag tracking-tag">
 						{t("sidebar.portrait")}
 					</span>
 				</div>
 
 				<SectionNav />
-				<div className="h-px bg-rule" />
-				<ReaderControls />
 				<div className="h-px bg-rule" />
 
 				<div className="font-mono text-mut-2 text-tag leading-prose">
@@ -89,116 +79,13 @@ function SectionNav() {
 						className="flex items-baseline gap-2 text-inherit hover:no-underline"
 					>
 						<span className="font-mono text-faint-2 text-tag">{section.n}</span>
-						<span className="font-mono text-mut-2 text-tag uppercase tracking-widest hover:text-accent">
+						<span className="font-mono text-mut-2 text-tag uppercase tracking-tag hover:text-accent">
 							{section.label}
 						</span>
 					</a>
 				))}
 			</div>
 		</nav>
-	);
-}
-
-/**
- * Segmented pickers for measure, size and face. Selection state lives in
- * `<html data-*>` and localStorage (see src/lib/reader.ts); the active-pill
- * styling is the CSS block in index.css keyed on those attributes, so these
- * buttons render identically on server and client no matter what is stored.
- */
-function ReaderControls() {
-	const { t } = useLanguage();
-	const [open, setOpen] = useState(true);
-
-	const groups: {
-		key: ReaderKey;
-		name: string;
-		options: { value: string | number; label: string; className?: string }[];
-	}[] = [
-		{
-			key: "measure",
-			name: t("reading.measure"),
-			options: READER.measure.options.map((value) => ({
-				value,
-				label: `${value}ch`,
-			})),
-		},
-		{
-			key: "size",
-			name: t("reading.size"),
-			options: [
-				{ value: 16, label: "S" },
-				{ value: 18, label: "M" },
-				{ value: 21, label: "L" },
-			],
-		},
-		{
-			key: "face",
-			name: t("reading.face"),
-			options: [
-				{ value: "serif", label: t("reading.serif"), className: "font-serif" },
-				{ value: "sans", label: t("reading.sans"), className: "font-sans" },
-				{ value: "mono", label: t("reading.mono"), className: "font-mono" },
-			],
-		},
-	];
-
-	return (
-		<div className="flex flex-col gap-3">
-			<button
-				type="button"
-				onClick={() => setOpen((value) => !value)}
-				aria-expanded={open}
-				className="flex cursor-pointer items-center gap-2 text-left"
-			>
-				<span className="flex-1 font-bold font-mono text-accent text-tag uppercase tracking-banner">
-					{t("reading.title")}
-				</span>
-				<span className="font-mono text-accent text-tag" aria-hidden>
-					{open ? "−" : "+"}
-				</span>
-			</button>
-			{open && (
-				<div className="flex flex-col gap-3">
-					{groups.map((group) => (
-						<div key={group.key} className="flex flex-col gap-1.5">
-							<span className="font-mono text-faint text-tag uppercase tracking-tag">
-								{group.name}
-							</span>
-							<div className="flex overflow-hidden rounded-card border border-accent-line">
-								{group.options.map((option) => (
-									<button
-										key={String(option.value)}
-										type="button"
-										data-reader-option={`${group.key}-${option.value}`}
-										onClick={() =>
-											// The options come straight from READER, so the cast is
-											// narrowing back what the render map widened.
-											setReaderPref(group.key, option.value as never)
-										}
-										className={clsx(
-											"flex-1 cursor-pointer border-rule border-r px-1 py-2 font-mono text-xs last:border-r-0",
-											option.className,
-										)}
-									>
-										{option.label}
-									</button>
-								))}
-							</div>
-						</div>
-					))}
-					<div className="font-mono text-faint text-tag leading-prose">
-						{t("reading.kept")}{" "}
-						<button
-							type="button"
-							onClick={resetReader}
-							className="cursor-pointer font-mono text-accent text-tag underline"
-						>
-							{t("reading.reset")}
-						</button>
-					</div>
-				</div>
-			)}
-		</div>
 	);
 }
 
