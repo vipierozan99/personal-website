@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 // Lives here rather than next to the route: a *.test.ts inside src/routes
 // would be picked up by the router plugin's file-based route scan.
-import { Route } from "../routes/__root";
+import { Route } from "../../src/routes/__root";
 
 const validate = Route.options.validateSearch as (
 	search: Record<string, unknown>,

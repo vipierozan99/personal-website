@@ -2,8 +2,8 @@ import { createMarkdownParser } from "comark";
 import { describe, expect, it } from "vitest";
 // `?raw` bypasses the comark plugin, so the test drives the parser itself and
 // can also parse mutated copies of the source.
-import source from "./en/site.md?raw";
-import { buildContent, type SiteDocument } from "./model";
+import source from "../../src/content/en/site.md?raw";
+import { buildContent, type SiteDocument } from "../../src/content/model";
 
 const parse = createMarkdownParser({ linkify: false });
 
@@ -56,5 +56,28 @@ describe("buildContent", () => {
 		await expect(async () =>
 			buildContent(await document(mangled)),
 		).rejects.toThrow(/unknown project "nope"/);
+	});
+
+	/**
+	 * KNOWN BUG — model.ts:174 flattens a link's children with join(""), which
+	 * stringifies any nested element. Emphasis inside a person's link label
+	 * renders as "strong,,site" rather than the words.
+	 */
+	it.fails("keeps a link label readable when it carries emphasis", async () => {
+		const mangled = source.replace("[site ↗](#)", "[**site** ↗](#)");
+		const { people } = buildContent(await document(mangled));
+		expect(people[0].links[0].label).toBe("site ↗");
+	});
+
+	/**
+	 * KNOWN BUG — model.ts:98 coerces the year with Number() and never checks
+	 * the result, so a typo becomes NaN, flows into the byYear comparator, and
+	 * leaves the project list in an unspecified order instead of failing.
+	 */
+	it.fails("rejects a project year that is not a number", async () => {
+		const mangled = source.replace("year=2024", 'year="soon"');
+		await expect(async () =>
+			buildContent(await document(mangled)),
+		).rejects.toThrow();
 	});
 });

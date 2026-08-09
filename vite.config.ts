@@ -2,6 +2,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
 import { comark } from "./vite/comark.ts";
 import { icuAst } from "./vite/icu-ast.ts";
@@ -49,7 +50,62 @@ export default defineConfig({
 		 */
 		__BUILD_TIME__: new Date().setUTCHours(0, 0, 0, 0),
 	},
+	/**
+	 * Three tiers, split by what each can actually observe, one directory under
+	 * tests/ each with its own setup.
+	 *
+	 * Both `extends` and `root` are load-bearing. Without the explicit root a
+	 * project resolves it to the directory of a package this config imported —
+	 * the playwright provider — and the route generator then scans
+	 * `@vitest/browser-playwright/src/routes` and dies.
+	 */
 	test: {
-		environment: "node",
+		projects: [
+			{
+				extends: true,
+				root: import.meta.dirname,
+				test: {
+					name: "unit",
+					environment: "node",
+					include: ["tests/unit/**/*.test.{ts,tsx}"],
+					setupFiles: ["tests/unit/setup.ts"],
+					/**
+					 * Pinned, and deliberately west of UTC. `__BUILD_TIME__` is UTC
+					 * midnight while `monthsBetween` reads local calendar fields, so a
+					 * negative offset is what makes that disagreement reproducible
+					 * rather than a property of whoever ran the suite.
+					 */
+					env: { TZ: "America/Sao_Paulo" },
+				},
+			},
+			{
+				extends: true,
+				root: import.meta.dirname,
+				test: {
+					name: "dom",
+					environment: "happy-dom",
+					include: ["tests/dom/**/*.test.{ts,tsx}"],
+					setupFiles: ["tests/dom/setup.ts"],
+				},
+			},
+			{
+				extends: true,
+				root: import.meta.dirname,
+				test: {
+					name: "browser",
+					include: ["tests/browser/**/*.test.{ts,tsx}"],
+					setupFiles: ["tests/browser/setup.ts"],
+					// The utilities under test are generated from the markup, so the
+					// real stylesheet has to reach the page rather than be stubbed.
+					css: true,
+					browser: {
+						enabled: true,
+						provider: playwright(),
+						headless: true,
+						instances: [{ browser: "chromium" }],
+					},
+				},
+			},
+		],
 	},
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { cvContent, DEFAULT_LOCALE, siteContent } from "./load";
+import { cvContent, DEFAULT_LOCALE, siteContent } from "../../src/content/load";
 
 describe("loadContent", () => {
 	it("discovers one locale per content directory", () => {

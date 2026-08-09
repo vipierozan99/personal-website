@@ -2,17 +2,14 @@ import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import { useMemo, useState } from "react";
 import type { Project } from "../../content/model";
-import { useHighlight } from "../../lib/highlight";
-import { useLanguage } from "../../lib/lang";
+import { useHighlight } from "../../lib/highlight-context";
+import { useLanguage } from "../../lib/lang-context";
+import { byYear } from "../../lib/sort";
 import { crossfade } from "../../lib/transitions";
 import { Panel } from "../Panel";
 import { InlineProse, Prose } from "../Prose";
-import { headerButton, SectionHeader } from "../SectionHeader";
-
-export const byYear =
-	(newestFirst: boolean) =>
-	(a: { year: number }, b: { year: number }): number =>
-		newestFirst ? b.year - a.year : a.year - b.year;
+import { SectionHeader } from "../SectionHeader";
+import { headerButton } from "../styles";
 
 export function Projects() {
 	const { content, t } = useLanguage();

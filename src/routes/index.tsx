@@ -27,7 +27,7 @@ function Home() {
 							<Intro />
 							{/* <Projects /> */}
 						</div>
-						<div className="flex min-w-0 max-w-160 flex-[1_1_30rem] flex-col gap-8">
+						<div className="flex min-w-0 max-w-140 flex-[1_1_30rem] flex-col gap-8">
 							<People />
 							<Topics />
 						</div>

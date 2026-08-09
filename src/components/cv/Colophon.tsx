@@ -1,4 +1,4 @@
-import { useT } from "../../lib/lang";
+import { useT } from "../../lib/lang-context";
 
 /**
  * The note below the last sheet. It is about the site rather than the person,

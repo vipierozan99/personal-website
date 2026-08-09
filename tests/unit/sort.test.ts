@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { byYear } from "./Projects";
+import { byYear } from "../../src/lib/sort";
 
 describe("byYear", () => {
 	const projects = [

@@ -1,37 +1,10 @@
-import type { i18n as I18n, TFunction } from "i18next";
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import type { i18n as I18n } from "i18next";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_LOCALE, siteContent } from "../content/load";
 import type { SiteContent } from "../content/model";
 import { syncLanguage, translator } from "../i18n";
+import { type Language, LanguageContext } from "./lang-context";
 import { crossfade } from "./transitions";
-
-type Language = {
-	/** The selected language. UI strings follow it immediately. */
-	lang: string;
-	/** The content on screen — trails the selection while a chunk loads. */
-	content: SiteContent;
-	t: TFunction;
-	pending: boolean;
-	prefetch: (locale: string) => void;
-};
-
-const LanguageContext = createContext<Language | null>(null);
-
-export function useLanguage(): Language {
-	const context = useContext(LanguageContext);
-	if (!context) throw new Error("useLanguage outside LanguageProvider");
-	return context;
-}
-
-export const useT = (): TFunction => useLanguage().t;
 
 /**
  * The language the URL asks for, applied after hydration.

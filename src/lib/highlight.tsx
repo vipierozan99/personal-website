@@ -1,32 +1,10 @@
+import { type ReactNode, useMemo, useState } from "react";
 import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useMemo,
-	useState,
-} from "react";
-import { useLanguage } from "./lang";
-
-export type Hover =
-	| { kind: "topic"; id: string }
-	| { kind: "project"; id: string }
-	| null;
-
-type Highlight = {
-	hover: Hover;
-	setHover: (hover: Hover) => void;
-	/** False dims the element; everything is lit when nothing is hovered. */
-	topicLit: (id: string) => boolean;
-	projectLit: (id: string) => boolean;
-};
-
-const HighlightContext = createContext<Highlight | null>(null);
-
-export function useHighlight(): Highlight {
-	const context = useContext(HighlightContext);
-	if (!context) throw new Error("useHighlight outside HighlightProvider");
-	return context;
-}
+	type Highlight,
+	HighlightContext,
+	type Hover,
+} from "./highlight-context";
+import { useLanguage } from "./lang-context";
 
 /**
  * The topic↔project cross-light: hovering one side dims the unrelated entries

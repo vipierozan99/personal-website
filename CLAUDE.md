@@ -21,7 +21,9 @@ print-exact CV route that also emits committed PDFs. pnpm.
 
     pnpm dev          vite dev server
     pnpm build        tsc -b → client build → SSR build → prerender.js → headers.js
-    pnpm test         vitest run
+    pnpm test         vitest run — the unit and dom projects
+    pnpm test:browser vitest run — the browser project (real chromium)
+    pnpm test:all     all three projects
     pnpm typecheck    tsc -b --noEmit
     pnpm lint         biome check .   (formats AND lints)
     pnpm size         size-limit budgets
@@ -29,8 +31,23 @@ print-exact CV route that also emits committed PDFs. pnpm.
     pnpm prepress     build + regenerate CV pagination and PDFs
     pnpm hooks        install the pre-push hook (once per clone)
 
-`knip` and `size` are manual — not wired into the build or any hook. Run them after
-touching dependencies or CSS.
+The pre-push hook runs lint, typecheck and `pnpm test` before prepress; CI adds the
+browser project, `size` and `knip`. `knip` currently reports rather than gates.
+
+## Tests
+
+Three projects, split by what each can observe — see `vite.config.ts`.
+
+- `tests/unit` (node) — pure logic, plus guards that read `scripts/` and `index.html`
+  as text. Real content is the fixture, imported with `?raw`.
+- `tests/dom` (happy-dom) — the markup contracts `scripts/paginate.js` and `pdf.js`
+  navigate by. Renders through `render()` from `src/entry-server.tsx`.
+- `tests/browser` (playwright chromium) — anything needing a layout engine: A4
+  geometry, the `--cv-fit` transform, resolved theme colors.
+
+Known bugs are pinned with `it.fails()` and a comment naming the invariant and its
+`file:line`. Such a test passes while the bug lives and goes **red when it is fixed** —
+that is the signal to promote it to a plain `it()`.
 
 ## Architecture
 
@@ -52,9 +69,15 @@ touching dependencies or CSS.
 - Biome sorts Tailwind classes, including inside `clsx()`. Static-only `className`s stay
   plain strings; use `clsx` only when a class is conditional.
 - No path aliases — imports are relative.
-- Tests are colocated `*.test.ts`, environment `node`, pure functions and real content
-  fixtures. Nothing renders React. Never put a test under `src/routes/` — the router
-  plugin scans it as a route.
+- **A `.tsx` file that exports a component must export nothing else.** React Fast Refresh
+  only treats a module as a hot-update boundary when every export is a component; one
+  constant or helper alongside turns each edit into a full page reload. Put the helper in
+  a sibling `.ts` — `components/styles.ts`, `lib/*-context.ts`, `cv/pagination.ts` are the
+  existing homes. Biome enforces this as `style/useComponentExportOnlyModules`.
+- Context providers therefore live apart from their hooks: `lib/lang.tsx` holds the
+  provider, `lib/lang-context.ts` the context, `useLanguage` and `useT`.
+- Tests live in `tests/<project>/`, one directory per vitest project, each with its own
+  `setup.ts`. Never put a test under `src/routes/` — the router plugin scans it as a route.
 - Colors come from semantic tokens (`text-ink-2`, `text-mut`, `text-faint`, `bg-band`,
   `border-rule`), which re-point under `[data-theme]`. Never use a `dark:` variant for
   color — it is reserved for the few places geometry differs between themes.

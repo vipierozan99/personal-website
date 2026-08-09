@@ -1,11 +1,12 @@
 import clsx from "clsx";
 import { useState } from "react";
-import { useHighlight } from "../../lib/highlight";
-import { useLanguage } from "../../lib/lang";
+import { useHighlight } from "../../lib/highlight-context";
+import { useLanguage } from "../../lib/lang-context";
 import { crossfade } from "../../lib/transitions";
 import { Panel } from "../Panel";
 import { InlineProse } from "../Prose";
-import { headerButton, SectionHeader } from "../SectionHeader";
+import { SectionHeader } from "../SectionHeader";
+import { headerButton } from "../styles";
 
 export function Topics() {
 	const { content, t } = useLanguage();

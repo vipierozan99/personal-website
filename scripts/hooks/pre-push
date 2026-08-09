@@ -15,6 +15,13 @@ set -e
 
 ARTIFACTS="src/components/cv/pagination.generated.ts public/*.pdf"
 
+# Cheap gates first: prepress runs two full builds and a browser, so there is no
+# point paying for it to tell you about a type error. The browser tier is left
+# out — it needs its own Chromium, and CI covers it.
+pnpm lint
+pnpm typecheck
+pnpm test
+
 pnpm prepress
 
 # shellcheck disable=SC2086 # the pathspecs are meant to be split and globbed by git

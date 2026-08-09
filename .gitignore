@@ -6,3 +6,7 @@ analyze
 .DS_Store
 .serena
 .tanstack
+.claude
+# Written by vitest's browser mode when a test fails.
+.vitest-attachments
+tests/**/__screenshots__

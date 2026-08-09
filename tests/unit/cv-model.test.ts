@@ -1,8 +1,13 @@
 import { createMarkdownParser } from "comark";
 import { describe, expect, it } from "vitest";
-import { attrsOf, type CvDocument, dissect, textOf } from "./cv-model";
+import {
+	attrsOf,
+	type CvDocument,
+	dissect,
+	textOf,
+} from "../../src/content/cv-model";
 // `?raw` bypasses the comark plugin, so the test drives the parser itself.
-import source from "./en/cv.md?raw";
+import source from "../../src/content/en/cv.md?raw";
 
 const parse = createMarkdownParser({ linkify: false });
 

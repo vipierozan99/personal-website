@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import portrait from "../assets/portrait.jpeg";
-import { useHighlight } from "../lib/highlight";
-import { useLanguage } from "../lib/lang";
+import { useHighlight } from "../lib/highlight-context";
+import { useLanguage } from "../lib/lang-context";
 import { useCopy } from "../lib/useCopy";
 
 export function Sidebar() {

@@ -1,4 +1,4 @@
-import { useLanguage } from "../../lib/lang";
+import { useLanguage } from "../../lib/lang-context";
 import { InlineProse, Prose } from "../Prose";
 
 export function Intro() {

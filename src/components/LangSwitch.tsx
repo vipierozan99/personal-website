@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
 import { useEffect, useId, useRef, useState } from "react";
 import { DEFAULT_LOCALE, siteContent } from "../content/load";
-import { useLanguage, useT } from "../lib/lang";
+import { useLanguage, useT } from "../lib/lang-context";
 import type { ExtraLang } from "../routes/__root";
 
 /**

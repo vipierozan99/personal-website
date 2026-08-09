@@ -1,4 +1,4 @@
-import { useT } from "../../lib/lang";
+import { useT } from "../../lib/lang-context";
 
 /**
  * The CV route's header action. The PDF follows the language actually

@@ -1,4 +1,4 @@
-import { useT } from "../lib/lang";
+import { useT } from "../lib/lang-context";
 import { useThemeToggle } from "../lib/theme";
 
 /**

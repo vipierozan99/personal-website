@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { useT } from "../lib/lang";
+import { useT } from "../lib/lang-context";
 import { usePanelOverflow } from "../lib/usePanelOverflow";
 
 /**

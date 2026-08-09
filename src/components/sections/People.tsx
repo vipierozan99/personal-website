@@ -1,4 +1,4 @@
-import { useLanguage } from "../../lib/lang";
+import { useLanguage } from "../../lib/lang-context";
 import { Panel } from "../Panel";
 import { Prose } from "../Prose";
 import { SectionHeader } from "../SectionHeader";

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useLanguage } from "../../lib/lang";
+import { useLanguage } from "../../lib/lang-context";
 import { useCopy } from "../../lib/useCopy";
 
 const rowLink = "font-mono text-xs";

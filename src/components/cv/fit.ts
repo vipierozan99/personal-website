@@ -2,6 +2,11 @@
 const SHEET_PX = 21 * (96 / 2.54);
 const GUTTER_PX = 2 * 16;
 
+/** The scale that fits a sheet plus its gutters into `device` CSS pixels. */
+export function sheetFit(device: number): number {
+	return Math.min(1, (device - GUTTER_PX) / SHEET_PX);
+}
+
 /**
  * Scales the sheet stack down to the width of the device, as `--cv-fit`.
  *
@@ -26,10 +31,7 @@ export function applySheetFit(): () => void {
 		const device = orientation.matches
 			? Math.min(screen.width, screen.height)
 			: Math.max(screen.width, screen.height);
-		root.style.setProperty(
-			"--cv-fit",
-			String(Math.min(1, (device - GUTTER_PX) / SHEET_PX)),
-		);
+		root.style.setProperty("--cv-fit", String(sheetFit(device)));
 	};
 
 	apply();

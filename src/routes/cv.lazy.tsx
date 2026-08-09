@@ -13,7 +13,7 @@ import { Sheet, SheetFooter } from "../components/cv/Sheet";
 import { Header } from "../components/Header";
 import type { CvDocument } from "../content/cv-model";
 import { cvContent } from "../content/load";
-import { useLanguage } from "../lib/lang";
+import { useLanguage } from "../lib/lang-context";
 import { crossfade } from "../lib/transitions";
 import { useNow } from "../lib/useNow";
 

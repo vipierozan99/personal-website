@@ -1,0 +1,47 @@
+# Everything the pre-push hook cannot be trusted to have run: a clone has no
+# hooks until `pnpm hooks`, and the hook deliberately skips the browser tier.
+#
+# prepress is absent on purpose. It needs a real Chrome and writes committed
+# artifacts; the hook owns that, on the machine that can review the diff.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      # Budgets read the built output, so this follows the build.
+      - run: pnpm size
+      # Reports only: knip currently flags the commented-out <Projects/>, which
+      # is the same dead code the #projects nav anchor points at. Make it a gate
+      # once that is resolved either way.
+      - run: pnpm knip
+        continue-on-error: true
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:browser

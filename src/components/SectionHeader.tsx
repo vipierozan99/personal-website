@@ -17,7 +17,3 @@ export function SectionHeader({
 		</div>
 	);
 }
-
-/** The bare text-button style the section headers share. */
-export const headerButton =
-	"cursor-pointer font-mono text-tag uppercase tracking-tag text-accent";
