@@ -101,9 +101,10 @@ function launch(chrome, profile) {
 		// language switch cannot catch an animation mid-flight, which is what
 		// made the PDFs differ run to run.
 		"--force-prefers-reduced-motion",
-		// Wide enough that the sheet-viewport script leaves the page at scale 1:
-		// measuring a deliberately shrunken layout would pack the sheets against
-		// the wrong capacity.
+		// Wide enough that --cv-fit (index.css) stays 1: measuring a
+		// deliberately shrunken layout would pack the sheets against the wrong
+		// capacity. Headless also reports pointer: fine, which the fit is gated
+		// on, so this is the second of two guards rather than the only one.
 		"--window-size=1400,1000",
 		"about:blank",
 	]);
@@ -269,12 +270,29 @@ export const cvLocales = () =>
 		.map((entry) => entry.name)
 		.sort();
 
-/** Switches the page to `locale` the way a reader does. */
-export const select = (
-	locale,
-) => `[...document.querySelectorAll("fieldset button")]
-  .find((button) => button.lang === ${JSON.stringify(locale)})
-  .click()`;
+/**
+ * Switches the page to `locale` the way a reader does: the languages live
+ * behind a disclosure in the header, so the menu has to be opened before the
+ * option it holds exists to be clicked.
+ */
+export const select = (locale) => `(async () => {
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  const option = () =>
+    [...document.querySelectorAll("header button[lang]")].find(
+      (button) => button.lang === ${JSON.stringify(locale)},
+    );
+  // Polled rather than clicked once and hoped: the trigger ships in the
+  // prerendered markup, so a click that lands before hydration opens nothing,
+  // and giving up after one frame turns that race into a TypeError instead of
+  // a retry.
+  for (let attempt = 0; attempt < 60 && !option(); attempt++) {
+    document.querySelector("header button[aria-expanded]")?.click();
+    await frame();
+  }
+  const chosen = option();
+  if (!chosen) throw new Error("no ${locale} option in the language menu");
+  chosen.click();
+})()`;
 
 /**
  * Waits for the page to finish paginating in `locale`: the document swapped

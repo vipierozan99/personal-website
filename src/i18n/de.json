@@ -1,12 +1,9 @@
 {
 	"header": {
 		"cv": "CV",
-		"github": "GitHub",
 		"language": "Language"
 	},
 	"theme": {
-		"dark": "Dark",
-		"light": "Light",
 		"toggle": "Toggle theme"
 	},
 	"nav": {

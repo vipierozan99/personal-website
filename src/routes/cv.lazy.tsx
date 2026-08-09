@@ -6,6 +6,7 @@ import { Colophon } from "../components/cv/Colophon";
 import { CvHeader } from "../components/cv/CvHeader";
 import { CvContext, type CvRenderContext } from "../components/cv/context";
 import { LoadingOverlay } from "../components/cv/LoadingOverlay";
+import { PdfLink } from "../components/cv/PdfLink";
 import { PAGINATION } from "../components/cv/pagination.generated";
 import { Sheet, SheetFooter } from "../components/cv/Sheet";
 import { Header } from "../components/Header";
@@ -29,7 +30,12 @@ function CvPage() {
 
 	return (
 		<CvContext.Provider value={render}>
-			<Header />
+			{/* The PDF follows the document, not the selection, and falls back to
+			    English for the moment before the chunk lands — the same document
+			    the placeholder below stands in for. */}
+			<Header
+				actions={<PdfLink documentLocale={doc?.frontmatter.locale ?? "en"} />}
+			/>
 			{/* leading-[normal] resets the desk's inherited line-height so every
 			    measured block height matches the committed pagination capture. */}
 			<main

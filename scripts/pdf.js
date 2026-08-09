@@ -69,7 +69,7 @@ const written = await withPage(DIST, async ({ evaluate, send, goto }) => {
 			printBackground: true,
 		});
 
-		// The CvBar links follow this naming rule; it cannot be imported into a
+		// The PdfLink hrefs follow this naming rule; it cannot be imported into a
 		// plain node script, so it is spelled out here. Every copy names its
 		// language — `/cv.pdf` is a redirect in public/_redirects, not a file.
 		const name = `cv.${locale}.pdf`;
