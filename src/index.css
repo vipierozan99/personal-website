@@ -268,33 +268,17 @@
  * scaled to fit; the header, the colophon and the loading overlay sit outside
  * it and stay at true device size.
  *
- * The factor is pure CSS. calc() cannot divide a length by a length, but the
- * tangent of atan2() of two lengths is their ratio — so this reads "the share
- * of a sheet the gutters leave", clamped at 1 so a wide enough desk is left
- * alone. Registering it is what makes `zoom` below see a plain number rather
- * than this expression, and what gives engines without trig functions a
- * defined answer: 1, the sheet overflowing and the page scrolling sideways,
- * which is what it did before.
- *
- * `screen and (pointer: coarse)` rather than the width alone, twice over:
- * desktop browser zoom shrinks 100dvw, so an ungated fit would shrink the
- * sheet by the same factor and make zooming in do nothing; and in print
- * 100dvw *is* the page box, which would shrink every printed sheet by 4%.
- * `hover: none` drops touch laptops, whose classic scrollbar makes 100dvw
- * overstate the width by its own thickness.
+ * The factor itself is set by src/components/cv/fit.ts, off `screen` — a
+ * viewport-relative one written here in CSS feeds back on iOS, where an
+ * overflowing sheet widens the layout viewport, the wider viewport computes a
+ * fit near 1, and the page oscillates under a pinch. The registration is what
+ * gives the rest of the site, and this page before that script runs, a defined
+ * answer of 1.
  */
 @property --cv-fit {
 	syntax: "<number>";
 	inherits: true;
 	initial-value: 1;
-}
-
-@media screen and (pointer: coarse) and (hover: none) {
-	:root {
-		/* 2rem is the desk's p-4 either side, kept outside the zoom so the
-		   gutter stays a real 16px; 21cm is the sheet in Sheet.tsx. */
-		--cv-fit: min(1, tan(atan2(100dvw - 2rem, 21cm)));
-	}
 }
 
 /*
@@ -308,6 +292,17 @@
  */
 @utility fit-sheets {
 	zoom: var(--cv-fit);
+}
+
+/*
+ * A sheet is printed at its own size on paper of that size, whatever phone
+ * asked for it. Unlayered on purpose: it has to beat the utility above, which
+ * Tailwind emits into a layer.
+ */
+@media print {
+	.fit-sheets {
+		zoom: 1;
+	}
 }
 
 /*

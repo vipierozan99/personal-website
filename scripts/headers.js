@@ -13,13 +13,13 @@ const HEADERS = "dist/_headers";
 
 /**
  * Every prerendered page and the inline scripts it is expected to carry: the
- * theme restoration script and the JSON-LD block, on both. The counts are
- * asserted so a new inline script cannot ship unhashed — silently blocked by
- * the very policy below.
+ * theme restoration script and the JSON-LD block on both, plus the sheet-fit
+ * script on the CV. The counts are asserted so a new inline script cannot ship
+ * unhashed — silently blocked by the very policy below.
  */
 const DOCUMENTS = [
 	{ file: "dist/index.html", expected: 2 },
-	{ file: "dist/cv/index.html", expected: 2 },
+	{ file: "dist/cv/index.html", expected: 3 },
 ];
 
 const hashes = [

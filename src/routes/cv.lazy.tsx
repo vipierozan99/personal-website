@@ -5,6 +5,7 @@ import { buildBlocks } from "../components/cv/blocks-builder";
 import { Colophon } from "../components/cv/Colophon";
 import { CvHeader } from "../components/cv/CvHeader";
 import { CvContext, type CvRenderContext } from "../components/cv/context";
+import { applySheetFit } from "../components/cv/fit";
 import { LoadingOverlay } from "../components/cv/LoadingOverlay";
 import { PdfLink } from "../components/cv/PdfLink";
 import { PAGINATION } from "../components/cv/pagination.generated";
@@ -27,6 +28,11 @@ function CvPage() {
 	const render = useMemo<CvRenderContext>(() => ({ t, now }), [t, now]);
 
 	const blocks = useMemo(() => (doc ? buildBlocks(doc) : []), [doc]);
+
+	// Sized on mount for SPA navigation; direct loads were already sized by
+	// the inline script prerender.js injects. Cleanup hands the rest of the
+	// site back its unscaled sheets.
+	useEffect(() => applySheetFit(), []);
 
 	return (
 		<CvContext.Provider value={render}>
