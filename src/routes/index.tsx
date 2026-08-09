@@ -18,12 +18,7 @@ function Home() {
 			<HighlightProvider>
 				<div className="grid flex-1 grid-cols-1 grid-rows-[1fr_auto_auto] gap-x-12 gap-y-12 px-gutter pt-12 pb-12 [grid-template-areas:'content'_'sidebar'_'footer'] md:grid-cols-[minmax(16rem,19rem)_1fr] md:grid-rows-[1fr_auto] md:[grid-template-areas:'sidebar_content'_'sidebar_footer']">
 					<div className="flex min-w-0 flex-wrap content-start items-start justify-center gap-12 [grid-area:content]">
-						{/* The prose measure, and the column is capped rather than the
-						    sections inside it: a section narrower than its column would
-						    sit flush left in it and stop lining up with the panels
-						    below. `ch` is one advance in the mono, so this is 72
-						    characters and stays 72 if a reader scales their text. */}
-						<div className="mx-auto flex min-w-0 max-w-[72ch] flex-[1_1_40rem] flex-col gap-8">
+						<div className="mx-auto flex min-w-0 max-w-[80ch] flex-[1_1_40rem] flex-col gap-8">
 							<Intro />
 							{/* <Projects /> */}
 						</div>
