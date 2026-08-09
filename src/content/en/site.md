@@ -7,9 +7,9 @@ before: "Before: Florianópolis, Aachen."
 person:
   name: Victor Pierozan
   email: victorpierozan@gmail.com
-  gitlab:
-    label: gitlab.com/vipierozan99
-    href: https://gitlab.com/vipierozan99
+  github:
+    label: github.com/vipierozan99
+    href: https://github.com/vipierozan99
   paper: https://ieeexplore.ieee.org/document/9965059
 ---
 
@@ -52,7 +52,7 @@ page breaks, print-only chrome removal, no scaled-down screenshot of a page.
 Deployed as static files.
 ::
 
-::project{#site title="This site" meta="React · Vite" link="Source →" year=2026 href="https://gitlab.com/vipierozan99" stack="React · Vite · Tailwind"}
+::project{#site title="This site" meta="React · Vite" link="Source →" year=2026 href="https://github.com/vipierozan99" stack="React · Vite · Tailwind"}
 Prerendered to static HTML, hydrated on load. No analytics.
 
 No analytics, no cookie banner, because there is nothing to consent to.

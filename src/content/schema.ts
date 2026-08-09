@@ -25,7 +25,7 @@ export const frontmatterSchema = z.strictObject({
 	person: z.strictObject({
 		name: z.string().min(1),
 		email: z.string().email(),
-		gitlab: z.strictObject({ label: z.string().min(1), href: z.url() }),
+		github: z.strictObject({ label: z.string().min(1), href: z.url() }),
 		paper: z.url(),
 	}),
 });

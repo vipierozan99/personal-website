@@ -35,10 +35,10 @@ export function Sidebar() {
         <div className="flex flex-col gap-2 font-mono text-ink-3 text-tag">
           <CopyEmailRow email={person.email} />
           <a
-            href={person.gitlab.href}
+            href={person.github.href}
             className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
           >
-            <span>{person.gitlab.label}</span>
+            <span>{person.github.label}</span>
             <span className="text-mut-2">↗</span>
           </a>
           <Link

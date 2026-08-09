@@ -7,20 +7,20 @@ import { useT } from "../../lib/lang";
  * the site.
  */
 export function Colophon() {
-	const t = useT();
+  const t = useT();
 
-	return (
-		<footer className="flex flex-col items-center pb-[1em] text-center font-mono text-[calc(13px*var(--page-scale,1))] text-mut leading-[1.6] print:hidden">
-			<p className="max-w-[40em] text-pretty">{t("cv.colophon")}</p>
-			<nav className="flex flex-wrap items-center justify-center gap-[1.5em] py-[0.75em]">
-				<a
-					href="https://gitlab.com/vipierozan99"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{t("cv.source")}
-				</a>
-			</nav>
-		</footer>
-	);
+  return (
+    <footer className="flex flex-col items-center pb-[1em] text-center font-mono text-[calc(13px*var(--page-scale,1))] text-mut leading-[1.6] print:hidden">
+      <p className="max-w-[40em] text-pretty">{t("cv.colophon")}</p>
+      <nav className="flex flex-wrap items-center justify-center gap-[1.5em] py-[0.75em]">
+        <a
+          href="https://github.com/vipierozan99"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t("cv.source")}
+        </a>
+      </nav>
+    </footer>
+  );
 }

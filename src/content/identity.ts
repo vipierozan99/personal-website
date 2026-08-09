@@ -48,8 +48,8 @@ export const IDENTITY = {
 	image: { path: "/profile.jpeg", width: 544, height: 726 },
 	knowsLanguage: ["pt-BR", "en"],
 	nationality: ["Brazil", "Italy"],
-	sameAs: ["https://gitlab.com/vipierozan99"],
-	repository: "https://gitlab.com/vipierozan99",
+	sameAs: ["https://github.com/vipierozan99"],
+	repository: "https://github.com/vipierozan99",
 	institutions: {
 		UFSC: {
 			name: "Universidade Federal de Santa Catarina",
