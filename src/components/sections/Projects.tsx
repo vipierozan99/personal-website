@@ -109,7 +109,7 @@ function Row({
 						<span className="font-serif text-accent text-title">
 							{project.title}
 						</span>
-						<span className="font-mono text-mut-2 text-tag uppercase tracking-tag">
+						<span className="font-mono text-mut text-tag uppercase tracking-tag">
 							{project.meta}
 						</span>
 					</span>

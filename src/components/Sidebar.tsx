@@ -24,7 +24,7 @@ export function Sidebar() {
 				<SectionNav />
 				<div className="h-px bg-rule" />
 
-				<div className="font-mono text-mut-2 text-tag leading-prose">
+				<div className="font-mono text-mut text-tag leading-prose">
 					{content.frontmatter.location}
 					<br />
 					{content.frontmatter.before}
@@ -39,14 +39,18 @@ export function Sidebar() {
 						className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
 					>
 						<span>{person.github.label}</span>
-						<span className="text-mut-2">↗</span>
+						<span className="text-mut-2" aria-hidden>
+							↗
+						</span>
 					</a>
 					<Link
 						to="/cv"
 						className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
 					>
 						<span>{t("elsewhere.cvLink").replace(" →", "")}</span>
-						<span className="text-mut-2">→</span>
+						<span className="text-mut-2" aria-hidden>
+							→
+						</span>
 					</Link>
 				</div>
 			</div>
@@ -75,8 +79,8 @@ function SectionNav() {
 						href={section.href}
 						className="flex items-baseline gap-2 text-inherit hover:no-underline"
 					>
-						<span className="font-mono text-faint-2 text-tag">{section.n}</span>
-						<span className="font-mono text-mut-2 text-tag uppercase tracking-tag hover:text-accent">
+						<span className="font-mono text-mut-2 text-tag">{section.n}</span>
+						<span className="font-mono text-mut text-tag uppercase tracking-tag hover:text-accent">
 							{section.label}
 						</span>
 					</a>

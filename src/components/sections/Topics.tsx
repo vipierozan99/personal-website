@@ -17,7 +17,7 @@ export function Topics() {
 			<SectionHeader label={t("topics.title")}>
 				<button
 					type="button"
-					className={clsx(headerButton, !glosses && "text-faint")}
+					className={clsx(headerButton, !glosses && "text-mut")}
 					onClick={() => crossfade(() => setGlosses((value) => !value))}
 				>
 					{glosses ? t("topics.glossesOn") : t("topics.glossesOff")}
@@ -43,22 +43,34 @@ export function Topics() {
 							<span
 								className={clsx(
 									"font-mono text-tag transition-colors duration-150",
-									hover && lit ? "text-accent-2" : "text-faint-2",
+									hover && lit ? "text-accent-2" : "text-mut-2",
 								)}
 							>
 								{String(index + 1).padStart(2, "0")}
 							</span>
-							<span className="flex flex-col gap-1">
+							{/* The measure is capped in `ch`, which in a monospace is exactly
+							    one advance — so this is literally 68 characters, and it stays
+							    68 if a reader scales their browser text. Sized here rather
+							    than on the children so the unit resolves against the size the
+							    text actually sets. */}
+							<span className="flex max-w-[68ch] flex-col gap-1 text-sm">
 								<span
 									className={clsx(
-										"text-sm leading-snug transition-colors duration-150",
+										"leading-normal transition-colors duration-150",
 										lit ? "text-ink-2" : "text-faint",
 									)}
 								>
 									{topic.label}
 								</span>
 								{glosses && (
-									<span className="text-mut-2 text-sm leading-normal">
+									/* Dims with its own label. Left unbranched, a dimmed row's
+									   gloss outshines the title it belongs to. */
+									<span
+										className={clsx(
+											"leading-prose transition-colors duration-150",
+											lit ? "text-mut" : "text-faint",
+										)}
+									>
 										<InlineProse value={topic.gloss} />
 									</span>
 								)}

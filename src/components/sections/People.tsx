@@ -9,7 +9,7 @@ export function People() {
 	return (
 		<section id="people" className="flex flex-col">
 			<SectionHeader label={t("people.title")}>
-				<span className="font-mono text-faint text-tag">
+				<span className="font-mono text-mut text-tag">
 					{t("people.count", { count: content.people.length })}
 				</span>
 			</SectionHeader>
@@ -24,7 +24,7 @@ export function People() {
 								<span className="font-serif text-2xl text-ink leading-heading">
 									{person.name}
 								</span>
-								<span className="font-mono text-mut-2 text-tag uppercase tracking-tag">
+								<span className="font-mono text-mut text-tag uppercase tracking-tag">
 									{person.subject}
 								</span>
 								<span className="flex flex-col gap-1 font-mono text-tag">
@@ -35,7 +35,7 @@ export function People() {
 									))}
 								</span>
 							</div>
-							<div className="prose-body flex-1 basis-75 text-pretty text-ink-2 text-sm">
+							<div className="prose-body flex-1 basis-75 text-pretty text-ink-2 [--prose-size:0.875rem]">
 								<Prose value={person.note} />
 							</div>
 						</div>

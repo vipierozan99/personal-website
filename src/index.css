@@ -527,10 +527,27 @@
  * Every run of body prose on the site. One size — the browser's own, which is
  * the reader's real preference rather than a picker's idea of it — set in the
  * mono at the leading and negative tracking the pairing note above explains.
+ *
+ * The size is read from `--prose-size` rather than stated outright, and that is
+ * the whole point: a `text-*` utility alongside this one sets font-size AND
+ * line-height, so the two collide at equal specificity and the emitted order
+ * decides — which silently cost the smaller runs the mono leading correction
+ * this utility exists to apply. A call site that wants a different size sets
+ * `[--prose-size:…]`, which nothing else writes, so the leading always survives.
+ *
+ * Registered, and not inherited, so that guarantee is structural rather than a
+ * convention: a run of prose nested inside a sized one falls back to the base
+ * size instead of silently picking up its parent's.
  */
+@property --prose-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1rem;
+}
+
 @utility prose-body {
 	font-family: var(--font-mono);
-	font-size: 1rem;
+	font-size: var(--prose-size, 1rem);
 	line-height: var(--leading-prose);
 	letter-spacing: var(--tracking-prose);
 

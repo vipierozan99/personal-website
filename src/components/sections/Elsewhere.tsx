@@ -35,7 +35,7 @@ export function Elsewhere() {
 				{t("elsewhere.cvLink")}
 			</Link>
 			<div className="flex-1" />
-			<span className="font-mono text-faint text-tag leading-prose">
+			<span className="font-mono text-mut text-tag leading-prose">
 				{t("elsewhere.colophon")}
 			</span>
 		</section>

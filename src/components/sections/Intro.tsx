@@ -6,7 +6,7 @@ export function Intro() {
 	const { frontmatter, intro } = content;
 
 	return (
-		<section id="intro" className="flex w-full flex-col gap-6 text-justify">
+		<section id="intro" className="flex w-full flex-col gap-6">
 			<div className="flex flex-col gap-2">
 				<h1 className="font-normal font-serif text-display text-ink leading-display tracking-display">
 					{frontmatter.person.name}

@@ -41,7 +41,7 @@ export function Header({ actions }: { actions?: ReactNode }) {
 			{/* The first thing to go when the bar runs out of room: it is the one
 			    line here that repeats what the page already says, and dropping it
 			    is what keeps the header a single row on a phone. */}
-			<span className="hidden whitespace-nowrap font-mono text-mut-2 text-tag uppercase tracking-tag sm:inline">
+			<span className="hidden whitespace-nowrap font-mono text-mut text-tag uppercase tracking-tag sm:inline">
 				{role}
 			</span>
 			<div className="min-w-4 flex-1" />
