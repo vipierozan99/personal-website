@@ -100,6 +100,20 @@
 	--ink: var(--ink-light);
 	--accent: var(--accent-light);
 	--accent-2: var(--accent-2-light);
+
+	/*
+	 * A sheet states its own type sizes, in px, against a 21cm page — so no
+	 * engine gets to second-guess them. WebKit reads a scaled-down sheet as
+	 * small text on a wide block and boosts it back to a "legible" floor,
+	 * which un-scales precisely what the fit scaled and spills the flow past
+	 * the paper; Chrome Android inflates the off-screen measuring rig the same
+	 * way, and a rig that measures inflated text paginates the wrong document.
+	 * `none` rather than the 100% the page carries: only none turns the
+	 * idempotent autosizer off. It costs nothing a reader wants — the sheets
+	 * are pinch-zoomable, and every other word on the site still adjusts.
+	 */
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 /*
