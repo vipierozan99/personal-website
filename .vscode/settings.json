@@ -1,0 +1,18 @@
+{
+	// detectIndentation guesses per file from its current contents, so one file
+	// written with spaces teaches the editor to keep writing spaces there. Off,
+	// the settings below are what every file gets.
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 2,
+	"files.eol": "\n",
+
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "explicit"
+	},
+
+	"[yaml]": { "editor.insertSpaces": true },
+	"[markdown]": { "editor.insertSpaces": true }
+}
