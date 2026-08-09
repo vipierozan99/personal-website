@@ -28,6 +28,7 @@ export function Panel({
 					className={clsx(
 						"overscroll-contain",
 						!expanded && "max-h-panel overflow-y-auto",
+						fade && "pb-6",
 					)}
 				>
 					{children}
