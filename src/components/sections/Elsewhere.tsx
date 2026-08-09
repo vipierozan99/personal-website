@@ -31,7 +31,7 @@ export function Elsewhere() {
 			<a href={person.paper} className={rowLink}>
 				{t("elsewhere.paper")}
 			</a>
-			<Link to="/cv" className={rowLink}>
+			<Link to="/cv" search className={rowLink}>
 				{t("elsewhere.cvLink")}
 			</Link>
 			<div className="flex-1" />

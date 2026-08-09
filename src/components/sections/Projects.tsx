@@ -152,7 +152,7 @@ function Row({
 function ProjectLink({ href, label }: { href: string; label: string }) {
 	const className = "self-start font-mono text-tag";
 	return href.startsWith("/") ? (
-		<Link to={href} className={className}>
+		<Link to={href} search className={className}>
 			{label}
 		</Link>
 	) : (

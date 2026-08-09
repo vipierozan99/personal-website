@@ -34,6 +34,13 @@ Promise.all(warm).then(async (ready) => {
 	// the page re-renders from scratch.
 	(router as { ssr?: unknown }).ssr = {};
 
+	// The first load has nothing to cross-fade between — the prerendered page is
+	// already on screen and this commit does not change it — and the transition
+	// would hold the paint, scrolling included, for its full length before
+	// hydration even starts. Consumed by this one load; every navigation after
+	// it falls back to defaultViewTransition.
+	router.shouldViewTransition = false;
+
 	await router.load();
 
 	const tree = (

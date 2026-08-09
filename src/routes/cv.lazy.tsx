@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AutoPaginate } from "../components/cv/AutoPaginate";
 import { buildBlocks } from "../components/cv/blocks-builder";
 import { Colophon } from "../components/cv/Colophon";
@@ -32,7 +32,11 @@ function CvPage() {
 	// Sized on mount for SPA navigation; direct loads were already sized by
 	// the inline script prerender.js injects. Cleanup hands the rest of the
 	// site back its unscaled sheets.
-	useEffect(() => applySheetFit(), []);
+	// Layout, not passive: a route change resolves its view transition from a
+	// layout effect, which runs before passive ones, so a passive fit could be
+	// applied after the snapshot — photographing unscaled 21cm sheets on a
+	// phone and then shrinking them.
+	useLayoutEffect(() => applySheetFit(), []);
 
 	return (
 		<CvContext.Provider value={render}>

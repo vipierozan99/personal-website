@@ -11,7 +11,7 @@ const navLink =
 export function CvLink() {
 	const t = useT();
 	return (
-		<Link to="/cv" className={navLink}>
+		<Link to="/cv" search className={navLink}>
 			{t("header.cv")}
 		</Link>
 	);
@@ -32,8 +32,12 @@ export function Header({ actions }: { actions?: ReactNode }) {
 		// of the first row, so this only bites on a row that wrapped — which is
 		// what pushes the controls to the right edge on a narrow screen.
 		<header className="sticky top-0 z-10 flex min-h-header flex-wrap items-center justify-end gap-x-3 gap-y-1 border-accent-line border-b bg-header px-gutter py-1 backdrop-blur-md sm:gap-x-4 print:hidden">
+			{/* `search` on every route link: the selected language lives in the
+			    URL, and dropping it here would hand the reader back to English
+			    mid-navigation. */}
 			<Link
 				to="/"
+				search
 				className="whitespace-nowrap font-serif text-ink text-lg hover:no-underline"
 			>
 				{person.name}

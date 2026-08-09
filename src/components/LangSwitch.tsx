@@ -58,6 +58,10 @@ export function LangSwitch() {
 				lang: code === DEFAULT_LOCALE ? undefined : (code as ExtraLang),
 			}),
 			replace: true,
+			// The swap is LanguageProvider's, inside its own cross-fade once the
+			// chunk is cached; a router transition around the URL change would
+			// only pre-empt it.
+			viewTransition: false,
 		});
 	};
 

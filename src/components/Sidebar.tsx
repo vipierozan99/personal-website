@@ -45,6 +45,7 @@ export function Sidebar() {
 					</a>
 					<Link
 						to="/cv"
+						search
 						className="flex justify-between text-ink-3 hover:text-accent hover:no-underline"
 					>
 						<span>{t("elsewhere.cvLink").replace(" →", "")}</span>
