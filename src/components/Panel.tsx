@@ -6,7 +6,8 @@ import { usePanelOverflow } from "../lib/usePanelOverflow";
 /**
  * Caps a section at 460px with its own scroll, a bottom fade while there is
  * more below, and a "Show all" pill — all only when the content actually
- * overflows. The expand runs inside a view transition.
+ * overflows. The expand animates the cap away rather than cross-fading, so the
+ * page below moves with it.
  */
 export function Panel({
 	label,
@@ -17,8 +18,9 @@ export function Panel({
 	children: ReactNode;
 }) {
 	const t = useT();
-	const { ref, expanded, fade, showButton, toggle } =
+	const { ref, expanded, overflowing, toggle } =
 		usePanelOverflow<HTMLDivElement>();
+	const showFade = overflowing && !expanded;
 
 	return (
 		<>
@@ -26,22 +28,27 @@ export function Panel({
 				<div
 					ref={ref}
 					className={clsx(
-						"overscroll-contain",
-						!expanded && "max-h-panel overflow-y-auto",
-						fade && "pb-6",
+						"scroll-gutter overflow-y-auto overscroll-contain",
+						!expanded && "max-h-panel",
+						showFade && "pb-6",
 					)}
 				>
 					{children}
 				</div>
-				{fade && (
-					<div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-15% from-paper to-transparent" />
-				)}
+				{/* Mounted in both states: appearing is what made the collapse flash,
+				    and an inert gradient costs a paint of nothing. */}
+				<div
+					className={clsx(
+						"pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-15% from-paper to-transparent transition-opacity duration-300",
+						showFade ? "opacity-100" : "opacity-0",
+					)}
+				/>
 			</div>
-			{showButton && (
+			{overflowing && (
 				<button
 					type="button"
 					onClick={toggle}
-					className="mt-3 cursor-pointer self-start whitespace-nowrap rounded-full border border-accent-line px-3 py-1.5 font-mono text-accent text-tag uppercase tracking-tag transition-colors duration-150 hover:border-accent"
+					className="fade-in mt-3 cursor-pointer self-start whitespace-nowrap rounded-full border border-accent-line px-3 py-1.5 font-mono text-accent text-tag uppercase tracking-tag transition-colors duration-150 hover:border-accent"
 				>
 					{expanded
 						? t("panel.collapse", { label })

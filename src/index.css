@@ -456,6 +456,30 @@
 }
 
 /*
+ * A capped panel is a scroll container in every state, expanded included, so
+ * that this gutter is reserved once and the text never reflows when the
+ * scrollbar comes and goes around an expand.
+ */
+@utility scroll-gutter {
+	scrollbar-gutter: stable;
+}
+
+/*
+ * For controls that appear once a measurement decides they are needed — the
+ * panel's "Show all". Mounting them at full opacity reads as a flash next to
+ * content that was already there.
+ */
+@utility fade-in {
+	animation: fade-in calc(240ms * var(--anim, 1)) ease both;
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+/*
  * The CV document's prose scopes. Its markdown arrives as plain h3/ul/p — the
  * document says what a thing is, never what size it is — and these name the
  * places that prose lands so the same tag can be two sizes. The px values are
