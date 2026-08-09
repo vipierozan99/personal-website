@@ -51,6 +51,74 @@
 }
 
 /*
+ * The faces the serif swaps *out of*. Newsreader is 129 KB and lands after
+ * first paint on a phone, so the first frame is set in whatever the stack falls
+ * through to, and an unadjusted system serif runs about 10% larger on the
+ * x-height at text sizes — that difference is the jump the wordmark and the h1
+ * make a frame in. These are local Georgia carrying Newsreader's metrics, so
+ * what the swap changes is the letterforms and not the size or the line box.
+ *
+ * Several of them because Newsreader has an optical-size axis and Georgia does
+ * not: Newsreader's x-height runs 0.4375em at 18px to 0.5em at 62px against
+ * Georgia's flat 0.4814em, so no single size-adjust can serve every size the
+ * page sets. Text sizes take the first pair. The h1 — the only thing set in
+ * --font-serif-display — is sized by a clamp, so it gets one face for each end
+ * of that clamp and a media query below hands over between them.
+ *
+ * Georgia rather than leaving it to ui-serif: it is the one serif installed
+ * across iOS, macOS and Windows alike, so the metrics being corrected are known
+ * rather than whatever a platform points ui-serif at. Android and Linux have
+ * neither and keep the unmatched fallback.
+ *
+ * The overrides are Newsreader's ratios divided by size-adjust, because that is
+ * the order the engine composes them in (verified in Chrome, not assumed).
+ * Newsreader's ratios come from scripts/font-metrics.js reading the shipped
+ * woff2; Georgia's are @capsizecss/metrics 4.2.0. Re-run that script and redo
+ * the division if either family changes.
+ */
+@font-face {
+	font-family: "Newsreader Fallback";
+	font-style: normal;
+	src: local("Georgia");
+	size-adjust: 90.87%;
+	ascent-override: 80.88%;
+	descent-override: 29.16%;
+	line-gap-override: 0%;
+}
+
+@font-face {
+	font-family: "Newsreader Fallback";
+	font-style: italic;
+	/* The roman is last on purpose: reached only where Georgia has no italic to
+	   name, where a synthesised slant at the right size still beats a jump. */
+	src: local("Georgia Italic"), local("Georgia-Italic"), local("Georgia");
+	size-adjust: 88.8%;
+	ascent-override: 82.77%;
+	descent-override: 29.84%;
+	line-gap-override: 0%;
+}
+
+@font-face {
+	font-family: "Newsreader Display Fallback";
+	font-style: normal;
+	src: local("Georgia");
+	size-adjust: 97.37%;
+	ascent-override: 75.48%;
+	descent-override: 27.21%;
+	line-gap-override: 0%;
+}
+
+@font-face {
+	font-family: "Newsreader Display Wide Fallback";
+	font-style: normal;
+	src: local("Georgia");
+	size-adjust: 103.85%;
+	ascent-override: 70.77%;
+	descent-override: 25.52%;
+	line-gap-override: 0%;
+}
+
+/*
  * The palette comes off three base colours per theme; every other slot is mixed
  * from them below. Mixing *toward the opposite pole* is what makes one formula
  * serve both themes: paper mixed toward ink darkens on the light theme and
@@ -207,7 +275,10 @@
 }
 
 @theme {
-	--font-serif: "Newsreader", ui-serif, Georgia, serif;
+	--font-serif: "Newsreader", "Newsreader Fallback", ui-serif, Georgia, serif;
+	/* The h1 only — same face, matched at the size the h1 is actually set at. */
+	--font-serif-display:
+		"Newsreader", "Newsreader Display Fallback", ui-serif, Georgia, serif;
 	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
 	/*
@@ -262,6 +333,26 @@
 	--spacing-gutter: clamp(1.125rem, 3vw, 2.75rem); /* page side padding */
 	--spacing-header: 3.375rem; /* 54px — header bar height */
 	--spacing-panel: 28.75rem; /* 460px — capped panel height */
+}
+
+/*
+ * Which of the two display stand-ins is the closer imitation, handed over at the
+ * size where they are equally wrong. The h1 is 38px up to a 633px viewport and
+ * 62px past 1033px; in between it slides, and Newsreader's x-height slides with
+ * it, from 0.4688em to 0.5em. The faces are matched to those two ends, so the
+ * crossover is the middle of that range — an h1 of 48px, which 6vw reaches at
+ * 800px — and switching there is what holds the whole span inside about 3%
+ * rather than leaving 6% at one end of the slide.
+ *
+ * Re-pointing the token rather than giving the h1 a second class: what changes
+ * with the viewport is which size the fallback has to imitate, which is the same
+ * fact the clamp states, not something about the element.
+ */
+@media (min-width: 800px) {
+	:root {
+		--font-serif-display:
+			"Newsreader", "Newsreader Display Wide Fallback", ui-serif, Georgia, serif;
+	}
 }
 
 :root {

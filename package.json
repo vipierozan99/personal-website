@@ -11,6 +11,7 @@
 		"pdf": "pnpm build && node scripts/pdf.js",
 		"prepress": "pnpm build && node scripts/paginate.js && node scripts/pdf.js",
 		"hooks": "ln -sf ../../scripts/hooks/pre-push .git/hooks/pre-push",
+		"font-metrics": "node scripts/font-metrics.js",
 		"lint": "biome check .",
 		"typecheck": "tsc -b --noEmit",
 		"test": "vitest run",

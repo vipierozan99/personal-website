@@ -8,7 +8,7 @@ export function Intro() {
 	return (
 		<section id="intro" className="flex w-full flex-col gap-6">
 			<div className="flex flex-col gap-2">
-				<h1 className="font-normal font-serif text-display text-ink leading-display tracking-display">
+				<h1 className="font-normal font-serif-display text-display text-ink leading-display tracking-display">
 					{frontmatter.person.name}
 				</h1>
 				<p className="font-serif text-accent text-lede italic leading-snug">
