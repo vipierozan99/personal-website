@@ -26,7 +26,14 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "tab",
+		// Tabs carry no width of their own, so this is only what biome assumes a
+		// tab occupies when deciding where to wrap. .editorconfig says the same
+		// thing to the editor; the two must agree or lines wrap at one width and
+		// are displayed at another.
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"useEditorconfig": true
 	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"json": {

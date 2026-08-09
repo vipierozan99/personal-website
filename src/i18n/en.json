@@ -1,73 +1,73 @@
 {
-  "header": {
-    "cv": "CV",
-    "github": "GitHub",
-    "language": "Language"
-  },
-  "theme": {
-    "dark": "Dark",
-    "light": "Light",
-    "toggle": "Toggle theme"
-  },
-  "nav": {
-    "intro": "Introduction",
-    "care": "What I care about",
-    "projects": "Projects",
-    "people": "People I follow",
-    "topics": "Talking about",
-    "elsewhere": "Elsewhere"
-  },
-  "projects": {
-    "title": "Projects",
-    "expandAll": "Expand all",
-    "collapseAll": "Collapse all",
-    "newest": "Newest",
-    "oldest": "Oldest"
-  },
-  "people": {
-    "title": "People I follow",
-    "count": "{count, plural, one {# person} other {# people}}"
-  },
-  "topics": {
-    "title": "Talking about",
-    "glossesOn": "Glosses on",
-    "glossesOff": "Glosses off"
-  },
-  "panel": {
-    "showAll": "Show all {label}",
-    "collapse": "Collapse {label}",
-    "projects": "projects",
-    "people": "people",
-    "topics": "{count} topics"
-  },
-  "elsewhere": {
-    "title": "Elsewhere",
-    "paper": "IEEE paper ↗",
-    "cvLink": "Curriculum vitæ →",
-    "colophon": "Set in JetBrains Mono and Newsreader."
-  },
-  "sidebar": {
-    "portrait": "portrait · drop yours here",
-    "hint": "Hover a topic or a project — the other column answers.",
-    "hintTopic": "Lit: what came of “{topic}”",
-    "hintProject": "Lit: what {project} is made of"
-  },
-  "contact": {
-    "copy": "Copy email",
-    "copied": "✓ copied"
-  },
-  "cv": {
-    "copyEmail": "copy {email}",
-    "copied": "copied ✓",
-    "pdf": "PDF",
-    "downloadPdf": "Download PDF",
-    "colophon": "A digital version of my CV, built with React and TailwindCSS.",
-    "source": "Source on GitHub",
-    "loading": "Loading…",
-    "footer": "{name} — CV",
-    "continued": "cont.",
-    "present": "present",
-    "years": "{count, plural, one {# yr} other {# yr}}",
-    "months": "{count, plural, one {# mo} other {# mo}}"
-  }
+	"header": {
+		"cv": "CV",
+		"github": "GitHub",
+		"language": "Language"
+	},
+	"theme": {
+		"dark": "Dark",
+		"light": "Light",
+		"toggle": "Toggle theme"
+	},
+	"nav": {
+		"intro": "Introduction",
+		"care": "What I care about",
+		"projects": "Projects",
+		"people": "People I follow",
+		"topics": "Talking about",
+		"elsewhere": "Elsewhere"
+	},
+	"projects": {
+		"title": "Projects",
+		"expandAll": "Expand all",
+		"collapseAll": "Collapse all",
+		"newest": "Newest",
+		"oldest": "Oldest"
+	},
+	"people": {
+		"title": "People I follow",
+		"count": "{count, plural, one {# person} other {# people}}"
+	},
+	"topics": {
+		"title": "Talking about",
+		"glossesOn": "Glosses on",
+		"glossesOff": "Glosses off"
+	},
+	"panel": {
+		"showAll": "Show all {label}",
+		"collapse": "Collapse {label}",
+		"projects": "projects",
+		"people": "people",
+		"topics": "{count} topics"
+	},
+	"elsewhere": {
+		"title": "Elsewhere",
+		"paper": "IEEE paper ↗",
+		"cvLink": "Curriculum vitæ →",
+		"colophon": "Set in JetBrains Mono and Newsreader."
+	},
+	"sidebar": {
+		"portrait": "portrait · drop yours here",
+		"hint": "Hover a topic or a project — the other column answers.",
+		"hintTopic": "Lit: what came of “{topic}”",
+		"hintProject": "Lit: what {project} is made of"
+	},
+	"contact": {
+		"copy": "Copy email",
+		"copied": "✓ copied"
+	},
+	"cv": {
+		"copyEmail": "copy {email}",
+		"copied": "copied ✓",
+		"pdf": "PDF",
+		"downloadPdf": "Download PDF",
+		"colophon": "A digital version of my CV, built with React and TailwindCSS.",
+		"source": "Source on GitHub",
+		"loading": "Loading…",
+		"footer": "{name} — CV",
+		"continued": "cont.",
+		"present": "present",
+		"years": "{count, plural, one {# yr} other {# yr}}",
+		"months": "{count, plural, one {# mo} other {# mo}}"
+	}
 }
