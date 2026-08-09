@@ -44,6 +44,7 @@ touching dependencies or CSS.
 - `src/components/` chrome · `sections/` home page · `cv/` the CV document.
 - `src/index.css` is the entire Tailwind v4 config — tokens, `@theme`, `@utility`.
 - `src/build/` — SSR-only emitters (JSON-LD, llms.txt, sitemap).
+- `docs/READABILITY.md` — the typography rules `src/index.css` encodes.
 
 ## Conventions
 
@@ -57,8 +58,8 @@ touching dependencies or CSS.
 - Colors come from semantic tokens (`text-ink-2`, `text-mut`, `text-faint`, `bg-band`,
   `border-rule`), which re-point under `[data-theme]`. Never use a `dark:` variant for
   color — it is reserved for the few places geometry differs between themes.
-- Running prose uses `prose-body`. To resize it set `[--prose-size:…]` — never pair a
-  `text-*` utility with it; equal specificity clobbers the mono leading.
+- Typography — measure, leading, contrast, and the corrections a monospace needs —
+  is `docs/READABILITY.md`. It is the authority; don't restate its numbers here.
 
 ## Sharp edges
 
