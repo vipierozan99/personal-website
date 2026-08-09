@@ -155,29 +155,35 @@ export function AutoPaginate({
 
 	return (
 		<>
-			{!pages && (
-				<UnpaginatedFlow blocks={blocks} header={header} footer={footer} />
-			)}
+			{/* The fit is on the sheets alone, so the chrome around them keeps its
+			    device-size typography. The rig below must stay outside it: it
+			    measures at zoom 1, which is what keeps its getBoundingClientRect
+			    deltas in the same pixels as the committed capture. */}
+			<div className="fit-sheets flex flex-col gap-4 print:gap-0">
+				{!pages && (
+					<UnpaginatedFlow blocks={blocks} header={header} footer={footer} />
+				)}
 
-			{pages?.map((indices, page) => (
-				<Sheet key={blocks[indices[0]]?.id ?? page}>
-					<SheetFlow>
-						{page === 0 ? (
-							header
-						) : (
-							<ContinuationRule
-								{...continuationFor(blocks[indices[0]], continuedLabel)}
-							/>
-						)}
-						{indices.map((index) => (
-							<div key={blocks[index].id} className="break-inside-avoid">
-								{blocks[index].node}
-							</div>
-						))}
-					</SheetFlow>
-					{footer(page + 1, pages.length)}
-				</Sheet>
-			))}
+				{pages?.map((indices, page) => (
+					<Sheet key={blocks[indices[0]]?.id ?? page}>
+						<SheetFlow>
+							{page === 0 ? (
+								header
+							) : (
+								<ContinuationRule
+									{...continuationFor(blocks[indices[0]], continuedLabel)}
+								/>
+							)}
+							{indices.map((index) => (
+								<div key={blocks[index].id} className="break-inside-avoid">
+									{blocks[index].node}
+								</div>
+							))}
+						</SheetFlow>
+						{footer(page + 1, pages.length)}
+					</Sheet>
+				))}
+			</div>
 
 			{measuring && (
 				<div

@@ -16,7 +16,7 @@ export function LoadingOverlay({ label }: { label: string }) {
 		<div
 			role="status"
 			aria-live="polite"
-			className="fixed inset-0 z-100 flex items-center justify-center gap-[0.7em] bg-band/80 font-mono text-[calc(14px*var(--page-scale,1))] text-ink-3 tracking-widest backdrop-blur-[3px] print:hidden"
+			className="fixed inset-0 z-100 flex items-center justify-center gap-[0.7em] bg-band/80 font-mono text-[14px] text-ink-3 tracking-widest backdrop-blur-[3px] print:hidden"
 		>
 			<span
 				aria-hidden="true"

@@ -3,13 +3,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AutoPaginate } from "../components/cv/AutoPaginate";
 import { buildBlocks } from "../components/cv/blocks-builder";
 import { Colophon } from "../components/cv/Colophon";
-import { CvBar } from "../components/cv/CvBar";
 import { CvHeader } from "../components/cv/CvHeader";
 import { CvContext, type CvRenderContext } from "../components/cv/context";
 import { LoadingOverlay } from "../components/cv/LoadingOverlay";
 import { PAGINATION } from "../components/cv/pagination.generated";
 import { Sheet, SheetFooter } from "../components/cv/Sheet";
-import { applySheetViewport } from "../components/cv/viewport";
 import { Header } from "../components/Header";
 import type { CvDocument } from "../content/cv-model";
 import { cvContent } from "../content/load";
@@ -29,11 +27,6 @@ function CvPage() {
 
 	const blocks = useMemo(() => (doc ? buildBlocks(doc) : []), [doc]);
 
-	// Sized on mount for SPA navigation; direct loads were already sized by
-	// the inline script prerender.js injects. Cleanup restores the responsive
-	// viewport for the rest of the site.
-	useEffect(() => applySheetViewport(), []);
-
 	return (
 		<CvContext.Provider value={render}>
 			<Header />
@@ -45,7 +38,6 @@ function CvPage() {
 			>
 				{doc ? (
 					<>
-						<CvBar documentLocale={doc.frontmatter.locale} />
 						<AutoPaginate
 							// Keyed on the document's own language rather than on the
 							// selection: the two part company while a chunk is in flight,
@@ -70,7 +62,9 @@ function CvPage() {
 				) : (
 					// SPA navigation lands here before the code-split document chunk
 					// arrives; direct loads never do (the entries warm the cache).
-					<Sheet fit="content" className="min-h-[40vh]" />
+					<div className="fit-sheets">
+						<Sheet fit="content" className="min-h-[40vh]" />
+					</div>
 				)}
 				{pending ? <LoadingOverlay label={t("cv.loading")} /> : null}
 			</main>

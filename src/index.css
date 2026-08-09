@@ -263,6 +263,54 @@
 }
 
 /*
+ * The CV's sheets are a fixed 21cm object on a page that is width=device-width
+ * like the rest of the site, so a phone viewport cannot hold one. The stack is
+ * scaled to fit; the header, the colophon and the loading overlay sit outside
+ * it and stay at true device size.
+ *
+ * The factor is pure CSS. calc() cannot divide a length by a length, but the
+ * tangent of atan2() of two lengths is their ratio — so this reads "the share
+ * of a sheet the gutters leave", clamped at 1 so a wide enough desk is left
+ * alone. Registering it is what makes `zoom` below see a plain number rather
+ * than this expression, and what gives engines without trig functions a
+ * defined answer: 1, the sheet overflowing and the page scrolling sideways,
+ * which is what it did before.
+ *
+ * `screen and (pointer: coarse)` rather than the width alone, twice over:
+ * desktop browser zoom shrinks 100dvw, so an ungated fit would shrink the
+ * sheet by the same factor and make zooming in do nothing; and in print
+ * 100dvw *is* the page box, which would shrink every printed sheet by 4%.
+ * `hover: none` drops touch laptops, whose classic scrollbar makes 100dvw
+ * overstate the width by its own thickness.
+ */
+@property --cv-fit {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+
+@media screen and (pointer: coarse) and (hover: none) {
+	:root {
+		/* 2rem is the desk's p-4 either side, kept outside the zoom so the
+		   gutter stays a real 16px; 21cm is the sheet in Sheet.tsx. */
+		--cv-fit: min(1, tan(atan2(100dvw - 2rem, 21cm)));
+	}
+}
+
+/*
+ * The sheet stack, scaled to fit. `zoom` rather than a transform because it
+ * reflows: the subtree's box shrinks with it, so nothing has to take back the
+ * height a transform would leave behind.
+ *
+ * AutoPaginate's measuring rig must stay OUTSIDE anything carrying this:
+ * getBoundingClientRect returns zoomed pixels while clientHeight returns
+ * unzoomed ones, and the paginator reads both.
+ */
+@utility fit-sheets {
+	zoom: var(--cv-fit);
+}
+
+/*
  * Shadows Tailwind's own `duration-*` so every existing `duration-300` picks up
  * the factor with no call-site changes. Cascade order does the work: this rule
  * is emitted after the built-in one for the same class name.
@@ -380,6 +428,19 @@
  * links inherit — only unclassed prose links fall through to the accent.
  */
 @layer base {
+	/*
+	 * The sheets are a 21cm object inside a device-width viewport — the exact
+	 * shape Chrome Android's text autosizing inflates, AutoPaginate's off-screen
+	 * rig included, where an inflated block would be measured and break the
+	 * document in the wrong places. Preflight sets the -webkit- form; this is
+	 * the unprefixed one, and the reason both are load-bearing. 100%, not none:
+	 * none would also take away iOS's user text zoom.
+	 */
+	html {
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
 	body {
 		@apply bg-paper font-mono text-ink;
 	}
