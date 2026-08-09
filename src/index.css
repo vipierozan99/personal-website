@@ -296,26 +296,59 @@
 }
 
 /*
- * The sheet stack, scaled to fit. `zoom` rather than a transform because it
- * reflows: the subtree's box shrinks with it, so nothing has to take back the
- * height a transform would leave behind.
+ * The sheet stack, scaled to fit — each sheet scaled, not the box around them.
  *
- * AutoPaginate's measuring rig must stay OUTSIDE anything carrying this:
- * getBoundingClientRect returns zoomed pixels while clientHeight returns
- * unzoomed ones, and the paginator reads both.
+ * A transform rather than `zoom`: zoom is a layout-time scale that WebKit
+ * implements its own way, shrinking a sheet's boxes while leaving its type at
+ * the size it was authored, so the paper came out at a third of the width with
+ * full-size words rewrapping and running off the page. A transform is applied
+ * after layout, to the rendered result, and no engine gets to scale some of it
+ * and not the rest.
+ *
+ * This column is the sheet's rendered width, and the sheets scale from its
+ * top-left corner to exactly fill it. Deliberately not left to `mx-auto` on
+ * the sheets: a 21cm sheet in a phone-width column is over-constrained, and
+ * where the auto margins land then is an engine's own business — centred on
+ * negative margins in one, flush left in another, and the scale lands
+ * somewhere different in each. Sizing the column instead puts the geometry in
+ * one place and makes it the same everywhere.
+ *
+ * AutoPaginate's measuring rig must stay OUTSIDE this: getBoundingClientRect
+ * returns transformed pixels while clientHeight returns untransformed ones,
+ * and the paginator reads both.
  */
 @utility fit-sheets {
-	zoom: var(--cv-fit);
-}
+	/*
+	 * Screen only, and stated once here rather than undone below: on paper the
+	 * sheets are already the right size, and a wrapper that rounds its width a
+	 * fraction of a point differently re-centres every sheet inside it — which
+	 * is a different PDF for no reason a reader could see.
+	 */
+	@media screen {
+		width: calc(21cm * var(--cv-fit));
+		margin-inline: auto;
+		/*
+		 * The sheets still lay out at 21cm and only render smaller, so their
+		 * boxes hang past this column and would give the page a sideways scroll
+		 * over nothing — everything painted is already inside. Clipped rather
+		 * than hidden so this stays a plain box and not a scroll container,
+		 * with a margin for the paper's own edges.
+		 */
+		overflow-x: clip;
+		overflow-clip-margin: 4px;
 
-/*
- * A sheet is printed at its own size on paper of that size, whatever phone
- * asked for it. Unlayered on purpose: it has to beat the utility above, which
- * Tailwind emits into a layer.
- */
-@media print {
-	.fit-sheets {
-		zoom: 1;
+		& > * {
+			margin-inline: 0;
+			transform: scale(var(--cv-fit));
+			transform-origin: top left;
+			/*
+			 * A transform is paint, not layout: the box still occupies the
+			 * height it had, so each sheet takes back what the scale did not.
+			 * Every paginated sheet is exactly one page tall, which is what
+			 * makes the correction a constant.
+			 */
+			margin-bottom: calc((var(--cv-fit) - 1) * 29.7cm);
+		}
 	}
 }
 
